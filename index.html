@@ -5,66 +5,78 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="אפליקציית מעקב משימות ותגמולים לילדים">
   <meta name="theme-color" content="#FF8C42">
+  <!-- PWA / iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="משימות ⭐">
+  <meta name="apple-mobile-web-app-title" content="משימות">
+  <meta name="mobile-web-app-capable" content="yes">
+  <!-- Icons -->
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
   <title>משימות ילדים ⭐</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #FF8C42;--primary-dark: #E07535;--primary-light: #FFD4B0;
-      --gold: #FFB703;--gold-dark: #E6A200;
-      --success: #3BB273;--danger: #E53935;
-      --purple: #7C5CBF;--purple-dark: #5E3FA3;
-      --bg: #FFF8F2;--bg2: #FFF0E5;--white: #FFFFFF;
-      --text: #1A2332;--text2: #6B7A8D;--border: rgba(0,0,0,0.08);
-      --shadow-sm: 0 2px 8px rgba(255,140,66,0.12);
-      --shadow: 0 4px 20px rgba(255,140,66,0.18);
-      --shadow-lg: 0 10px 40px rgba(255,140,66,0.25);
-      --radius: 20px;--radius-sm: 14px;--radius-xs: 8px;
+      --primary:#FF8C42;--primary-dark:#E07535;--primary-light:#FFD4B0;
+      --gold:#FFB703;--gold-dark:#E6A200;
+      --success:#3BB273;--danger:#E53935;
+      --purple:#7C5CBF;--purple-dark:#5E3FA3;
+      --bg:#FFF8F2;--bg2:#FFF0E5;--white:#FFFFFF;
+      --text:#1A2332;--text2:#6B7A8D;--border:rgba(0,0,0,0.08);
+      --shadow-sm:0 2px 8px rgba(255,140,66,0.12);
+      --shadow:0 4px 20px rgba(255,140,66,0.18);
+      --radius:20px;--radius-sm:14px;--radius-xs:8px;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{height:100%;overscroll-behavior:none;}
     body{font-family:'Heebo',-apple-system,sans-serif;background:var(--bg);color:var(--text);direction:rtl;text-align:right;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;min-height:100%;}
     .screen{display:none;flex-direction:column;min-height:100dvh;max-width:480px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom);}
     .screen.active{display:flex;}
+
+    /* LOADING */
     #screen-loading{align-items:center;justify-content:center;background:linear-gradient(145deg,#FF8C42 0%,#FFB703 100%);}
     .loading-logo{font-size:80px;animation:floatBounce 1.8s ease-in-out infinite;}
-    .loading-title{font-size:28px;font-weight:900;color:white;margin-top:12px;letter-spacing:-0.5px;}
+    .loading-title{font-size:28px;font-weight:900;color:white;margin-top:12px;}
     .loading-sub{font-size:14px;color:rgba(255,255,255,0.8);margin-top:4px;}
     .spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;margin-top:28px;}
+
     @keyframes spin{to{transform:rotate(360deg);}}
     @keyframes floatBounce{0%,100%{transform:translateY(0) rotate(-5deg);}50%{transform:translateY(-14px) rotate(5deg);}}
     @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
     @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
     @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
     @keyframes pop{0%{transform:scale(0.8);opacity:0;}80%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+
+    /* SETUP */
     #screen-setup{overflow-y:auto;}
     .setup-hero{background:linear-gradient(145deg,#FF8C42,#FFB703);padding:32px 24px 28px;padding-top:calc(32px + env(safe-area-inset-top));color:white;text-align:center;}
     .setup-hero h1{font-size:26px;font-weight:900;}
     .setup-hero p{font-size:14px;opacity:0.9;margin-top:6px;line-height:1.6;}
     .setup-body{padding:20px;}
     .step-row{display:flex;gap:14px;margin-bottom:24px;align-items:flex-start;}
-    .step-num{min-width:32px;height:32px;background:var(--primary);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;margin-top:2px;}
-    .step-content{flex:1;}
+    .step-num{min-width:32px;height:32px;background:var(--primary);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;margin-top:2px;flex-shrink:0;}
     .step-title{font-size:15px;font-weight:800;margin-bottom:6px;}
     .step-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px;}
     .code-block{background:#1e2a3a;color:#79d4f5;padding:14px;border-radius:var(--radius-xs);font-family:monospace;font-size:11px;overflow-x:auto;direction:ltr;text-align:left;line-height:1.8;}
+
+    /* HEADER */
     .app-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
     .header-title{font-size:17px;font-weight:800;}
-    .header-back{background:none;border:none;font-size:22px;cursor:pointer;padding:6px 10px;border-radius:var(--radius-xs);color:var(--text);line-height:1;transition:background .2s;}
-    .header-btn{background:var(--bg2);border:none;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+    .header-back{background:none;border:none;font-size:22px;cursor:pointer;padding:6px 10px;border-radius:var(--radius-xs);color:var(--text);line-height:1;}
+    .header-btn{background:var(--bg2);border:none;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+    /* BUTTONS */
     .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 20px;border:none;border-radius:var(--radius-sm);font-family:'Heebo',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;width:100%;}
     .btn:active{transform:scale(0.97);}
     .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:white;box-shadow:var(--shadow);}
-    .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:white;}
     .btn-purple{background:linear-gradient(135deg,var(--purple),var(--purple-dark));color:white;}
     .btn-success{background:var(--success);color:white;}
     .btn-ghost{background:var(--bg2);color:var(--text);border:2px solid var(--border);}
+
+    /* INPUTS */
     .form-group{margin-bottom:14px;}
     .form-label{display:block;font-size:13px;font-weight:700;color:var(--text2);margin-bottom:5px;}
     .form-input{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:'Heebo',sans-serif;font-size:15px;color:var(--text);background:var(--white);direction:rtl;transition:border-color .2s;-webkit-appearance:none;}
@@ -72,6 +84,8 @@
     .form-row{display:flex;gap:10px;}
     .form-row .form-group{flex:1;}
     .card{background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm);border:1px solid var(--border);}
+
+    /* LOGIN */
     #screen-login{align-items:center;justify-content:flex-start;background:linear-gradient(180deg,#FFF8F2 0%,#FFF0E5 100%);overflow-y:auto;}
     .login-top{width:100%;padding:40px 24px 20px;padding-top:calc(40px + env(safe-area-inset-top));text-align:center;}
     .login-logo{font-size:72px;animation:floatBounce 2s ease-in-out infinite;}
@@ -86,32 +100,38 @@
     .child-name-text{font-size:16px;font-weight:800;color:var(--text);}
     .parent-login-btn{display:flex;align-items:center;gap:12px;padding:16px 18px;background:var(--white);border:2px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;box-shadow:var(--shadow-sm);width:100%;font-family:'Heebo',sans-serif;}
     .parent-login-btn:active{transform:scale(0.97);border-color:var(--primary);}
-    #screen-parent-pin{align-items:center;justify-content:flex-start;padding:0;}
-    .pin-title{font-size:22px;font-weight:800;margin-bottom:8px;}
-    .pin-sub{font-size:14px;color:var(--text2);margin-bottom:30px;}
+
+    /* PIN SCREEN (shared) */
+    .pin-screen-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+    .pin-title{font-size:22px;font-weight:800;margin-bottom:8px;text-align:center;}
+    .pin-sub{font-size:14px;color:var(--text2);margin-bottom:30px;text-align:center;}
     .pin-dots{display:flex;gap:16px;margin-bottom:10px;}
     .pin-dot{width:18px;height:18px;border-radius:50%;border:2.5px solid var(--primary);transition:all .2s;}
     .pin-dot.filled{background:var(--primary);transform:scale(1.1);}
-    .pin-error{color:var(--danger);font-size:14px;min-height:22px;margin-bottom:20px;}
+    .pin-error{color:var(--danger);font-size:14px;min-height:22px;margin-bottom:20px;text-align:center;}
     .pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:260px;width:100%;}
     .pin-key{height:68px;background:var(--white);border:2px solid var(--border);border-radius:var(--radius-sm);font-size:24px;font-weight:800;font-family:'Heebo',sans-serif;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
     .pin-key:active{background:var(--primary);color:white;border-color:var(--primary);transform:scale(0.93);}
     .pin-key.ghost{background:transparent;border-color:transparent;cursor:default;}
+
+    /* PARENT HOME */
     #screen-parent-home{overflow-y:auto;}
     .parent-hero{background:linear-gradient(145deg,#FF8C42 0%,#FFB703 100%);padding:24px 20px 52px;padding-top:calc(24px + env(safe-area-inset-top));color:white;position:relative;overflow:hidden;}
     .parent-hero::after{content:'⭐';position:absolute;font-size:220px;opacity:.08;top:-30px;right:-40px;line-height:1;pointer-events:none;}
     .parent-hero-top{display:flex;justify-content:space-between;align-items:center;}
     .parent-hero h1{font-size:22px;font-weight:900;margin-top:4px;}
-    .logout-btn{background:rgba(255,255,255,.2);border:none;color:white;padding:8px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;backdrop-filter:blur(8px);}
+    .logout-btn{background:rgba(255,255,255,.2);border:none;color:white;padding:8px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;}
     .stats-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:-26px 14px 0;position:relative;z-index:10;}
     .stat-card{background:var(--white);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border);}
     .stat-num{font-size:22px;font-weight:900;color:var(--primary);}
     .stat-lbl{font-size:11px;color:var(--text2);margin-top:2px;font-weight:600;}
     .menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:14px;}
     .menu-card{background:var(--white);border-radius:var(--radius);padding:22px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:all .2s;border:1px solid var(--border);box-shadow:var(--shadow-sm);text-align:center;}
-    .menu-card:active{transform:scale(0.95);box-shadow:var(--shadow);}
+    .menu-card:active{transform:scale(0.95);}
     .menu-icon{font-size:38px;line-height:1;}
     .menu-label{font-size:14px;font-weight:800;}
+
+    /* COMP ITEMS */
     .comp-item{display:flex;align-items:center;gap:12px;background:var(--white);border-radius:var(--radius-sm);padding:12px 14px;border:1px solid var(--border);margin-bottom:8px;}
     .comp-emoji{font-size:28px;}
     .comp-info{flex:1;}
@@ -119,22 +139,24 @@
     .comp-meta{font-size:12px;color:var(--text2);}
     .comp-price{font-size:14px;font-weight:800;color:var(--success);}
     .del-btn{background:none;border:none;font-size:16px;cursor:pointer;padding:4px 6px;border-radius:6px;opacity:.5;transition:opacity .2s;}
-    .del-btn:hover{opacity:1;}
+
+    /* TASK/CHILD MANAGE */
     .task-manage-item,.child-manage-item{display:flex;align-items:center;gap:12px;background:var(--white);border-radius:var(--radius-sm);padding:14px;border:1px solid var(--border);margin-bottom:8px;animation:fadeIn .3s ease;}
     .task-m-emoji{font-size:34px;}
     .task-m-info{flex:1;}
     .task-m-name{font-size:15px;font-weight:700;}
     .task-m-price{font-size:13px;color:var(--success);font-weight:700;margin-top:2px;}
-    .task-m-actions,.icon-btn-row{display:flex;gap:6px;}
-    .icon-btn{background:var(--bg2);border:none;width:36px;height:36px;border-radius:50%;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+    .icon-btn{background:var(--bg2);border:none;width:36px;height:36px;border-radius:50%;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+    /* CHILD HOME */
     #screen-child-home{overflow-y:auto;}
     .child-hero{padding:28px 20px 56px;padding-top:calc(28px + env(safe-area-inset-top));background:linear-gradient(145deg,#7C5CBF 0%,#5E3FA3 50%,#4A2E8A 100%);color:white;text-align:center;position:relative;overflow:hidden;}
     .child-hero::before{content:'✨';position:absolute;font-size:200px;opacity:.06;top:-30px;left:-40px;pointer-events:none;}
     .child-hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
-    .child-hero-btn{background:rgba(255,255,255,.18);border:none;color:white;padding:7px 13px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;backdrop-filter:blur(8px);}
+    .child-hero-btn{background:rgba(255,255,255,.18);border:none;color:white;padding:7px 13px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;}
     .child-hero-avatar{font-size:72px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.25));animation:floatBounce 2.5s ease-in-out infinite;}
     .child-hero-name{font-size:26px;font-weight:900;margin-top:8px;}
-    .child-earn-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.18);backdrop-filter:blur(10px);border-radius:999px;padding:9px 22px;margin-top:12px;font-size:17px;font-weight:800;}
+    .child-earn-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.18);border-radius:999px;padding:9px 22px;margin-top:12px;font-size:17px;font-weight:800;}
     .tasks-body{padding:14px;margin-top:-28px;}
     .tasks-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
     .today-tag{font-size:12px;color:var(--success);font-weight:700;background:#e8f8ef;padding:4px 10px;border-radius:999px;}
@@ -147,11 +169,15 @@
     .task-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.3;}
     .task-price-tag{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:white;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:800;}
     .task-count{position:absolute;top:-8px;left:-8px;background:var(--primary);color:white;min-width:26px;height:26px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;border:2px solid var(--bg);padding:0 4px;}
+
+    /* REPORT */
     .report-table{width:100%;border-collapse:collapse;font-size:14px;}
     .report-table th{background:var(--bg2);padding:10px 12px;text-align:right;font-weight:800;font-size:12px;color:var(--text2);}
     .report-table td{padding:10px 12px;border-bottom:1px solid var(--border);}
     .report-table tr:last-child td{border-bottom:none;}
     .report-total-bar{display:flex;justify-content:space-between;align-items:center;padding:16px;background:linear-gradient(135deg,#11998e,#38ef7d);color:white;border-radius:var(--radius-sm);margin-top:12px;}
+
+    /* MODAL */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px);}
     .modal-overlay.active{display:flex;}
     .modal{background:var(--white);border-radius:var(--radius) var(--radius) 0 0;padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom));width:100%;max-width:480px;max-height:85vh;overflow-y:auto;animation:slideUp .3s ease;}
@@ -165,13 +191,19 @@
     .emoji-picker{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px;}
     .emoji-opt{width:46px;height:46px;display:flex;align-items:center;justify-content:center;font-size:26px;border-radius:var(--radius-sm);cursor:pointer;border:2px solid transparent;transition:all .15s;}
     .emoji-opt:hover,.emoji-opt.sel{border-color:var(--primary);background:var(--bg2);}
+
+    /* TOAST */
     .toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:white;padding:12px 22px;border-radius:999px;font-size:14px;font-weight:600;z-index:3000;transition:transform .3s ease;white-space:nowrap;max-width:calc(100vw - 40px);text-align:center;}
     .toast.show{transform:translateX(-50%) translateY(0);}
     .toast.ok{background:#1b5e20;}
     .toast.err{background:var(--danger);}
+
+    /* CONFETTI */
     .confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;}
     @keyframes cfFall{0%{transform:translateY(-20px) rotate(0);opacity:1;}100%{transform:translateY(105vh) rotate(720deg);opacity:0;}}
     .cf{position:absolute;animation:cfFall linear forwards;}
+
+    /* MISC */
     .empty{text-align:center;padding:44px 20px;color:var(--text2);}
     .empty-icon{font-size:56px;margin-bottom:12px;}
     .empty-title{font-size:17px;font-weight:700;color:var(--text);}
@@ -183,6 +215,12 @@
     .section-title{font-size:17px;font-weight:800;margin-bottom:12px;}
     .setting-card{background:var(--white);border-radius:var(--radius);padding:18px;border:1px solid var(--border);margin-bottom:14px;}
     .setting-card h3{font-size:15px;font-weight:800;margin-bottom:12px;}
+    .pin-optional-note{font-size:12px;color:var(--text2);margin-top:4px;}
+
+    /* Child PIN dots - purple theme */
+    .pin-dot.child{border-color:var(--purple);}
+    .pin-dot.child.filled{background:var(--purple);}
+
     @media print{.no-print{display:none!important;}.screen{display:block!important;min-height:auto;}body{background:white;}}
   </style>
 </head>
@@ -238,7 +276,7 @@
       <div class="step-content">
         <div class="step-title">קוד PIN להורה</div>
         <div class="form-group" style="margin-top:10px;">
-          <label class="form-label">קוד PIN (4 ספרות)</label>
+          <label class="form-label">קוד PIN הורה (4 ספרות)</label>
           <input type="number" class="form-input" id="s-pin" placeholder="1234" maxlength="4">
         </div>
       </div>
@@ -287,28 +325,61 @@
     <span class="header-title">כניסת הורה</span>
     <span style="width:40px;"></span>
   </div>
-  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+  <div class="pin-screen-wrap">
     <div style="font-size:56px;margin-bottom:16px;">🔐</div>
-    <div class="pin-title">הכנס קוד PIN</div>
-    <div class="pin-sub">קוד 4 ספרות</div>
-    <div class="pin-dots" id="pin-dots">
+    <div class="pin-title">קוד PIN הורה</div>
+    <div class="pin-sub">הזן קוד 4 ספרות</div>
+    <div class="pin-dots" id="parent-pin-dots">
       <div class="pin-dot"></div><div class="pin-dot"></div>
       <div class="pin-dot"></div><div class="pin-dot"></div>
     </div>
-    <div class="pin-error" id="pin-error"></div>
+    <div class="pin-error" id="parent-pin-error"></div>
     <div class="pin-keypad">
-      <button class="pin-key" onclick="pinPress('1')">1</button>
-      <button class="pin-key" onclick="pinPress('2')">2</button>
-      <button class="pin-key" onclick="pinPress('3')">3</button>
-      <button class="pin-key" onclick="pinPress('4')">4</button>
-      <button class="pin-key" onclick="pinPress('5')">5</button>
-      <button class="pin-key" onclick="pinPress('6')">6</button>
-      <button class="pin-key" onclick="pinPress('7')">7</button>
-      <button class="pin-key" onclick="pinPress('8')">8</button>
-      <button class="pin-key" onclick="pinPress('9')">9</button>
+      <button class="pin-key" onclick="pinPress('parent','1')">1</button>
+      <button class="pin-key" onclick="pinPress('parent','2')">2</button>
+      <button class="pin-key" onclick="pinPress('parent','3')">3</button>
+      <button class="pin-key" onclick="pinPress('parent','4')">4</button>
+      <button class="pin-key" onclick="pinPress('parent','5')">5</button>
+      <button class="pin-key" onclick="pinPress('parent','6')">6</button>
+      <button class="pin-key" onclick="pinPress('parent','7')">7</button>
+      <button class="pin-key" onclick="pinPress('parent','8')">8</button>
+      <button class="pin-key" onclick="pinPress('parent','9')">9</button>
       <button class="pin-key ghost"></button>
-      <button class="pin-key" onclick="pinPress('0')">0</button>
-      <button class="pin-key" onclick="pinDelete()">⌫</button>
+      <button class="pin-key" onclick="pinPress('parent','0')">0</button>
+      <button class="pin-key" onclick="pinDelete('parent')">⌫</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHILD PIN -->
+<div id="screen-child-pin" class="screen">
+  <div class="app-header">
+    <button class="header-back" onclick="showScreen('screen-login')">→</button>
+    <span class="header-title" id="child-pin-header-title">כניסת ילד/ה</span>
+    <span style="width:40px;"></span>
+  </div>
+  <div class="pin-screen-wrap">
+    <div style="font-size:64px;margin-bottom:12px;" id="child-pin-avatar">🦁</div>
+    <div class="pin-title" id="child-pin-name">שם</div>
+    <div class="pin-sub">הזן קוד PIN שלך</div>
+    <div class="pin-dots" id="child-pin-dots">
+      <div class="pin-dot child"></div><div class="pin-dot child"></div>
+      <div class="pin-dot child"></div><div class="pin-dot child"></div>
+    </div>
+    <div class="pin-error" id="child-pin-error"></div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinPress('child','1')">1</button>
+      <button class="pin-key" onclick="pinPress('child','2')">2</button>
+      <button class="pin-key" onclick="pinPress('child','3')">3</button>
+      <button class="pin-key" onclick="pinPress('child','4')">4</button>
+      <button class="pin-key" onclick="pinPress('child','5')">5</button>
+      <button class="pin-key" onclick="pinPress('child','6')">6</button>
+      <button class="pin-key" onclick="pinPress('child','7')">7</button>
+      <button class="pin-key" onclick="pinPress('child','8')">8</button>
+      <button class="pin-key" onclick="pinPress('child','9')">9</button>
+      <button class="pin-key ghost"></button>
+      <button class="pin-key" onclick="pinPress('child','0')">0</button>
+      <button class="pin-key" onclick="pinDelete('child')">⌫</button>
     </div>
   </div>
 </div>
@@ -403,7 +474,7 @@
   </div>
   <div class="page-content">
     <div class="setting-card">
-      <h3>🔐 שינוי קוד PIN</h3>
+      <h3>🔐 שינוי PIN הורה</h3>
       <div class="form-group">
         <label class="form-label">קוד PIN חדש (4 ספרות)</label>
         <input type="number" class="form-input" id="new-pin" placeholder="קוד חדש">
@@ -505,6 +576,11 @@
       <label class="form-label">אמוג'י פרופיל</label>
       <div class="emoji-picker" id="child-emoji-grid"></div>
     </div>
+    <div class="form-group">
+      <label class="form-label">קוד PIN לילד/ה (4 ספרות)</label>
+      <input type="number" class="form-input" id="mchild-pin" placeholder="השאר ריק = ללא PIN" maxlength="4">
+      <div class="pin-optional-note">💡 אופציונלי – אם לא תגדיר, הילד/ה נכנסים בלחיצה ישירה</div>
+    </div>
     <button class="btn btn-purple" onclick="saveChild()" style="margin-bottom:8px;">💾 שמור</button>
     <button class="btn btn-ghost" onclick="closeModal('modal-child')">ביטול</button>
   </div>
@@ -540,6 +616,7 @@ let db = null;
 const S = {
   familyId: null,
   user: null,
+  pendingChild: null,   // child pending PIN verification
   family: { parentPin: '1234', tasks: [], children: [] },
   reportMonth: ym(),
   histMonth: ym(),
@@ -597,7 +674,7 @@ document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click
 function confetti(){
   const c=document.getElementById('confetti'); c.innerHTML='';
   const cols=['#FF8C42','#FFB703','#3BB273','#E63946','#7C5CBF','#667eea'];
-  for(let i=0;i<60;i++){
+  for(let i=0;i<65;i++){
     const p=document.createElement('div'); p.className='cf';
     const sz=5+Math.random()*9;
     p.style.cssText=`left:${Math.random()*100}%;top:${-Math.random()*20}%;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?'50%':'3px'};width:${sz}px;height:${sz}px;animation-delay:${Math.random()*.6}s;animation-duration:${1.2+Math.random()*.8}s;`;
@@ -609,23 +686,30 @@ function confetti(){
 // ── SETUP ──
 let setupChildren=[];
 function initSetupChildren(){
-  setupChildren=[{name:'',emoji:'🦁'},{name:'',emoji:'🐯'}];
+  setupChildren=[{name:'',emoji:'🦁',pin:''},{name:'',emoji:'🐯',pin:''}];
   renderSetupChildren();
 }
 function renderSetupChildren(){
   const el=document.getElementById('setup-children'); el.innerHTML='';
   setupChildren.forEach((c,i)=>{
     const row=document.createElement('div');
-    row.className='form-row'; row.style.marginBottom='10px';
-    row.innerHTML=`<div class="form-group"><input type="text" class="form-input" placeholder="שם ילד/ה ${i+1}" value="${c.name}" oninput="setupChildren[${i}].name=this.value"></div>
-      <div style="display:flex;align-items:flex-end;padding-bottom:14px;">
-        <span style="font-size:32px;padding:8px;border:2px solid var(--border);border-radius:10px;cursor:pointer;" onclick="pickChildEmoji(${i})">${c.emoji}</span>
-      </div>`;
+    row.style.cssText='background:var(--bg2);border-radius:14px;padding:12px;margin-bottom:10px;';
+    row.innerHTML=`
+      <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:8px;">
+        <div style="flex:1;"><label class="form-label">שם ילד/ה ${i+1}</label>
+          <input type="text" class="form-input" placeholder="שם" value="${c.name}" oninput="setupChildren[${i}].name=this.value"></div>
+        <div style="padding-bottom:14px;">
+          <span style="font-size:32px;padding:8px;border:2px solid var(--border);border-radius:10px;cursor:pointer;display:inline-block;" onclick="pickChildEmoji(${i})">${c.emoji}</span>
+        </div>
+      </div>
+      <label class="form-label">PIN לילד/ה (4 ספרות – אופציונלי)</label>
+      <input type="number" class="form-input" placeholder="השאר ריק = ללא PIN" value="${c.pin}" oninput="setupChildren[${i}].pin=this.value" maxlength="4">
+    `;
     el.appendChild(row);
   });
 }
 window.addSetupChild=function(){
-  setupChildren.push({name:'',emoji:'🐻'});
+  setupChildren.push({name:'',emoji:'🐻',pin:''});
   renderSetupChildren();
 };
 window.pickChildEmoji=function(idx){
@@ -643,7 +727,7 @@ function showEmojiPicker(emojis,cb){
   grid.style.cssText='display:grid;grid-template-columns:repeat(6,1fr);gap:8px;';
   emojis.forEach(em=>{
     const s=document.createElement('span');
-    s.textContent=em; s.style.cssText='font-size:28px;padding:8px;text-align:center;border-radius:10px;cursor:pointer;';
+    s.textContent=em; s.style.cssText='font-size:28px;padding:8px;text-align:center;border-radius:10px;cursor:pointer;transition:background .15s;';
     s.onclick=()=>{ cb(em); document.body.removeChild(overlay); };
     grid.appendChild(s);
   });
@@ -660,7 +744,10 @@ window.saveSetup=async function(){
   if(!apiKey||!projectId){ showToast('נא למלא API Key ו-Project ID','err'); return; }
   const ok=await initFB({apiKey, authDomain:projectId+'.firebaseapp.com', projectId});
   if(!ok){ showToast('שגיאה בחיבור ל-Firebase. בדוק את הפרטים','err'); return; }
-  const children=setupChildren.filter(c=>c.name.trim()).map(c=>({id:uid(),name:c.name.trim(),avatar:c.emoji}));
+  const children=setupChildren.filter(c=>c.name.trim()).map(c=>({
+    id:uid(), name:c.name.trim(), avatar:c.emoji,
+    pin: c.pin.trim().length===4 ? c.pin.trim() : ''
+  }));
   const familyId=uid()+uid();
   localStorage.setItem('fbConfig',JSON.stringify({apiKey,authDomain:projectId+'.firebaseapp.com',projectId}));
   localStorage.setItem('familyId',familyId);
@@ -691,8 +778,8 @@ async function getCompletions(filters){
     const q=query(collection(db,'completions'),where('familyId','==',S.familyId));
     const snap=await getDocs(q);
     let docs=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(filters.date)  docs=docs.filter(d=>d.date===filters.date);
-    if(filters.month) docs=docs.filter(d=>d.month===filters.month);
+    if(filters.date)    docs=docs.filter(d=>d.date===filters.date);
+    if(filters.month)   docs=docs.filter(d=>d.month===filters.month);
     if(filters.childId&&filters.childId!=='all') docs=docs.filter(d=>d.childId===filters.childId);
     docs.sort((a,b)=>(a.timestamp?.seconds||0)-(b.timestamp?.seconds||0));
     return docs;
@@ -711,23 +798,82 @@ function renderLoginScreen(){
     children.forEach(c=>{
       const btn=document.createElement('button');
       btn.className='child-profile-btn';
-      btn.innerHTML=`<div class="child-avatar">${c.avatar}</div><div class="child-name-text">${c.name}</div>`;
-      btn.onclick=()=>{ S.user=c; showScreen('screen-child-home'); };
+      const hasPin=c.pin&&c.pin.length===4;
+      btn.innerHTML=`<div class="child-avatar">${c.avatar}</div><div class="child-name-text">${c.name}</div>${hasPin?`<div style="font-size:10px;color:var(--text2);background:var(--bg2);padding:2px 8px;border-radius:999px;">🔒 PIN</div>`:''}`;
+      btn.onclick=()=>{ loginChild(c); };
       grid.appendChild(btn);
     });
   } else sec.style.display='none';
 }
 
-// ── PIN ──
-let pinVal='';
-window.pinPress=function(d){ if(pinVal.length>=4) return; pinVal+=d; updateDots(); if(pinVal.length===4) setTimeout(checkPin,150); };
-window.pinDelete=function(){ pinVal=pinVal.slice(0,-1); updateDots(); document.getElementById('pin-error').textContent=''; };
-function updateDots(){ document.querySelectorAll('.pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinVal.length)); }
-function checkPin(){
-  if(pinVal===String(S.family.parentPin)){ S.user='parent'; pinVal=''; updateDots(); document.getElementById('pin-error').textContent=''; showScreen('screen-parent-home'); }
-  else{ document.getElementById('pin-error').textContent='❌ קוד שגוי'; pinVal=''; updateDots(); const d=document.getElementById('pin-dots'); d.style.animation='shake .4s'; setTimeout(()=>d.style.animation='',400); }
+function loginChild(c){
+  if(c.pin&&c.pin.length===4){
+    // Show PIN screen for this child
+    S.pendingChild=c;
+    childPinVal='';
+    updatePinDots('child');
+    document.getElementById('child-pin-avatar').textContent=c.avatar;
+    document.getElementById('child-pin-name').textContent=c.name;
+    document.getElementById('child-pin-header-title').textContent='כניסה – '+c.name;
+    document.getElementById('child-pin-error').textContent='';
+    showScreen('screen-child-pin');
+  } else {
+    S.user=c;
+    showScreen('screen-child-home');
+  }
 }
-window.logout=function(){ S.user=null; pinVal=''; updateDots(); showLoginScreen(); };
+
+// ── PIN ──
+let parentPinVal='';
+let childPinVal='';
+
+window.pinPress=function(who,d){
+  if(who==='parent'){
+    if(parentPinVal.length>=4) return;
+    parentPinVal+=d; updatePinDots('parent');
+    if(parentPinVal.length===4) setTimeout(()=>checkPin('parent'),150);
+  } else {
+    if(childPinVal.length>=4) return;
+    childPinVal+=d; updatePinDots('child');
+    if(childPinVal.length===4) setTimeout(()=>checkPin('child'),150);
+  }
+};
+window.pinDelete=function(who){
+  if(who==='parent'){ parentPinVal=parentPinVal.slice(0,-1); updatePinDots('parent'); document.getElementById('parent-pin-error').textContent=''; }
+  else { childPinVal=childPinVal.slice(0,-1); updatePinDots('child'); document.getElementById('child-pin-error').textContent=''; }
+};
+function updatePinDots(who){
+  const val=who==='parent'?parentPinVal:childPinVal;
+  const prefix=who==='parent'?'parent':'child';
+  document.querySelectorAll(`#${prefix}-pin-dots .pin-dot`).forEach((d,i)=>d.classList.toggle('filled',i<val.length));
+}
+function checkPin(who){
+  if(who==='parent'){
+    if(parentPinVal===String(S.family.parentPin)){
+      S.user='parent'; parentPinVal=''; updatePinDots('parent');
+      document.getElementById('parent-pin-error').textContent='';
+      showScreen('screen-parent-home');
+    } else {
+      document.getElementById('parent-pin-error').textContent='❌ קוד שגוי';
+      parentPinVal=''; updatePinDots('parent');
+      shakeElement('parent-pin-dots');
+    }
+  } else {
+    const child=S.pendingChild;
+    if(child&&childPinVal===String(child.pin)){
+      S.user=child; childPinVal=''; updatePinDots('child');
+      document.getElementById('child-pin-error').textContent='';
+      S.pendingChild=null;
+      showScreen('screen-child-home');
+    } else {
+      document.getElementById('child-pin-error').textContent='❌ קוד שגוי';
+      childPinVal=''; updatePinDots('child');
+      shakeElement('child-pin-dots');
+    }
+  }
+}
+function shakeElement(id){ const el=document.getElementById(id); el.style.animation='shake .4s'; setTimeout(()=>el.style.animation='',400); }
+window.logout=function(){ S.user=null; S.pendingChild=null; parentPinVal=''; childPinVal=''; updatePinDots('parent'); updatePinDots('child'); showLoginScreen(); };
 window.resetApp=function(){ if(confirm('לנקות את כל הנתונים המקומיים?')){ localStorage.clear(); location.reload(); } };
 
 // ── PARENT HOME ──
@@ -744,12 +890,10 @@ async function renderParentHome(){
   act.innerHTML='';
   [...todayC].reverse().slice(0,6).forEach(c=>act.appendChild(makeCompItem(c,false)));
 }
-
 function makeCompItem(c,showDel=false){
   const task=S.family.tasks.find(t=>t.id===c.taskId);
-  const em=task?task.emoji:'✅';
   const div=document.createElement('div'); div.className='comp-item';
-  div.innerHTML=`<span class="comp-emoji">${em}</span>
+  div.innerHTML=`<span class="comp-emoji">${task?task.emoji:'✅'}</span>
     <div class="comp-info"><div class="comp-name">${c.taskName}</div><div class="comp-meta">${c.childName} • ${fmtTime(c.timestamp)}</div></div>
     <div class="comp-price">+${c.price}₪</div>
     ${showDel?`<button class="del-btn" onclick="delComp('${c.id}')">🗑️</button>`:''}`;
@@ -779,7 +923,7 @@ async function renderToday(){
   });
 }
 
-// ── TASK MANAGEMENT ──
+// ── EMOJI GRID ──
 function buildEmojiGrid(gridId,emojis,sel){
   const g=document.getElementById(gridId); g.innerHTML='';
   emojis.forEach(em=>{
@@ -788,12 +932,14 @@ function buildEmojiGrid(gridId,emojis,sel){
     g.appendChild(s);
   });
 }
+
+// ── TASKS ──
 function renderTasks(){
   const el=document.getElementById('tasks-list'); el.innerHTML='';
-  if(!S.family.tasks.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">אין משימות</div><div class="empty-sub">לחץ ➕ כדי להוסיף</div></div>`; return; }
+  if(!S.family.tasks.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">אין משימות</div><div class="empty-sub">לחץ ➕</div></div>`; return; }
   S.family.tasks.forEach(t=>{
     const d=document.createElement('div'); d.className='task-manage-item';
-    d.innerHTML=`<span class="task-m-emoji">${t.emoji}</span><div class="task-m-info"><div class="task-m-name">${t.name}</div><div class="task-m-price">₪${t.price}</div></div><div class="task-m-actions"><button class="icon-btn" onclick="openEditTask('${t.id}')">✏️</button><button class="icon-btn" onclick="delTask('${t.id}')">🗑️</button></div>`;
+    d.innerHTML=`<span class="task-m-emoji">${t.emoji}</span><div class="task-m-info"><div class="task-m-name">${t.name}</div><div class="task-m-price">₪${t.price}</div></div><div style="display:flex;gap:6px;"><button class="icon-btn" onclick="openEditTask('${t.id}')">✏️</button><button class="icon-btn" onclick="delTask('${t.id}')">🗑️</button></div>`;
     el.appendChild(d);
   });
 }
@@ -813,26 +959,32 @@ window.saveTask=async function(){
 };
 window.delTask=async function(id){ if(!confirm('למחוק?')) return; const tasks=S.family.tasks.filter(t=>t.id!==id); try{ await updateDoc(doc(db,'families',S.familyId),{tasks}); showToast('נמחק','ok'); }catch(e){ showToast('שגיאה','err'); } };
 
-// ── CHILDREN MANAGEMENT ──
+// ── CHILDREN ──
 function renderChildren(){
   const el=document.getElementById('children-list'); el.innerHTML='';
   if(!S.family.children.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">👧</div><div class="empty-title">אין ילדים</div></div>`; return; }
   S.family.children.forEach(c=>{
     const d=document.createElement('div'); d.className='child-manage-item';
-    d.innerHTML=`<span style="font-size:44px;">${c.avatar}</span><div style="flex:1;font-size:17px;font-weight:800;">${c.name}</div><div style="display:flex;gap:6px;"><button class="icon-btn" onclick="openEditChild('${c.id}')">✏️</button><button class="icon-btn" onclick="delChild('${c.id}')">🗑️</button></div>`;
+    const hasPin=c.pin&&c.pin.length===4;
+    d.innerHTML=`<span style="font-size:44px;">${c.avatar}</span>
+      <div style="flex:1;"><div style="font-size:17px;font-weight:800;">${c.name}</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:2px;">${hasPin?'🔒 יש PIN':'🔓 ללא PIN'}</div></div>
+      <div style="display:flex;gap:6px;"><button class="icon-btn" onclick="openEditChild('${c.id}')">✏️</button><button class="icon-btn" onclick="delChild('${c.id}')">🗑️</button></div>`;
     el.appendChild(d);
   });
 }
-window.openAddChild=function(){ document.getElementById('mchild-title').textContent='הוסף ילד/ה'; document.getElementById('mchild-id').value=''; document.getElementById('mchild-name').value=''; buildEmojiGrid('child-emoji-grid',CHILD_EM,'🦁'); openModal('modal-child'); };
-window.openEditChild=function(id){ const c=S.family.children.find(x=>x.id===id); if(!c) return; document.getElementById('mchild-title').textContent='ערוך פרופיל'; document.getElementById('mchild-id').value=id; document.getElementById('mchild-name').value=c.name; buildEmojiGrid('child-emoji-grid',CHILD_EM,c.avatar); openModal('modal-child'); };
+window.openAddChild=function(){ document.getElementById('mchild-title').textContent='הוסף ילד/ה'; document.getElementById('mchild-id').value=''; document.getElementById('mchild-name').value=''; document.getElementById('mchild-pin').value=''; buildEmojiGrid('child-emoji-grid',CHILD_EM,'🦁'); openModal('modal-child'); };
+window.openEditChild=function(id){ const c=S.family.children.find(x=>x.id===id); if(!c) return; document.getElementById('mchild-title').textContent='ערוך פרופיל'; document.getElementById('mchild-id').value=id; document.getElementById('mchild-name').value=c.name; document.getElementById('mchild-pin').value=c.pin||''; buildEmojiGrid('child-emoji-grid',CHILD_EM,c.avatar); openModal('modal-child'); };
 window.saveChild=async function(){
   const id=document.getElementById('mchild-id').value;
   const name=document.getElementById('mchild-name').value.trim();
   const avatar=document.querySelector('#child-emoji-grid .sel')?.textContent||'🦁';
+  const pinRaw=document.getElementById('mchild-pin').value.trim();
+  const pin=pinRaw.length===4&&!isNaN(pinRaw)?pinRaw:'';
   if(!name){ showToast('נא להזין שם','err'); return; }
   let children=[...S.family.children];
-  if(id) children=children.map(c=>c.id===id?{...c,name,avatar}:c);
-  else children.push({id:uid(),name,avatar});
+  if(id) children=children.map(c=>c.id===id?{...c,name,avatar,pin}:c);
+  else children.push({id:uid(),name,avatar,pin});
   try{ await updateDoc(doc(db,'families',S.familyId),{children}); closeModal('modal-child'); showToast('נשמר ✅','ok'); renderLoginScreen(); }
   catch(e){ showToast('שגיאה','err'); }
 };
@@ -906,7 +1058,6 @@ async function renderChildHome(){
   if(!todayC.length){ todayList.innerHTML='<p style="font-size:13px;color:var(--text2);text-align:center;padding:14px;">עוד לא ביצעת משימות היום</p>'; return; }
   [...todayC].reverse().forEach(c=>todayList.appendChild(makeCompItem(c,false)));
 }
-
 window.openConfirmTask=function(task){
   S.pendingTask=task;
   document.getElementById('conf-emoji').textContent=task.emoji;
