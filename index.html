@@ -298,7 +298,7 @@
 </head>
 <body>
 
-<div class="ver" id="ver-badge">v2.0</div>
+<div class="ver" id="ver-badge">v2.1</div>
 
 <!-- LOADING -->
 <div id="screen-loading" class="screen active">
@@ -402,9 +402,21 @@
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
     <div class="child-join-icon">👧</div>
     <div class="child-join-title">כניסת ילד/ה</div>
-    <div class="child-join-sub">בקש מההורה את קוד החיבור<br>תמצא אותו בהגדרות אפליקציית ההורה</div>
-    <input class="join-code-input" id="join-code-field" type="text" maxlength="12"
-      placeholder="הזן קוד חיבור" autocomplete="off" autocorrect="off" spellcheck="false">
+    <div class="child-join-sub">בקש מההורה את שני הפרטים הבאים<br>תמצא אותם בהגדרות ← קוד חיבור</div>
+    <div style="width:100%;margin-bottom:12px;">
+      <label class="form-label" style="text-align:center;display:block;margin-bottom:6px;">Project ID (של ההורה)</label>
+      <input class="form-input" id="join-project-field" type="text"
+        placeholder="my-family-tasks"
+        autocomplete="off" autocorrect="off" spellcheck="false"
+        style="text-align:center;font-size:15px;">
+    </div>
+    <div style="width:100%;margin-bottom:18px;">
+      <label class="form-label" style="text-align:center;display:block;margin-bottom:6px;">קוד חיבור</label>
+      <input class="join-code-input" id="join-code-field" type="text" maxlength="9"
+        placeholder="ABCD-1234"
+        autocomplete="off" autocorrect="off" spellcheck="false"
+        oninput="formatJoinCode(this)">
+    </div>
     <button class="btn btn-purple" onclick="submitJoinCode()">🔗 התחבר</button>
     <button class="join-back-btn" onclick="showScreen('screen-welcome')">← חזור</button>
   </div>
@@ -581,11 +593,15 @@
     <div class="setting-card">
       <h3>🔗 קוד חיבור לילדים</h3>
       <div class="join-code-display">
-        <div class="join-code-label">תן לילד/ה להזין קוד זה באפליקציה שלהם</div>
-        <div class="join-code-value" id="join-code-display">------</div>
-        <div class="join-code-note">כניסה ל-"ילד/ה" ← "כניסת ילד/ה" ← הזן קוד זה</div>
+        <div class="join-code-label">Project ID — תן לילד להזין זאת</div>
+        <div class="join-code-value" id="join-project-display" style="font-size:15px;letter-spacing:1px;">------</div>
       </div>
-      <button class="btn btn-ghost btn-sm" style="width:auto;" onclick="copyJoinCode()">📋 העתק קוד</button>
+      <div class="join-code-display" style="margin-top:8px;">
+        <div class="join-code-label">קוד חיבור — תן לילד להזין זאת</div>
+        <div class="join-code-value" id="join-code-display">----&nbsp;----</div>
+        <div class="join-code-note">ילד פותח אפליקציה ← "אני ילד/ה" ← מזין שני הפרטים</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="width:auto;margin-top:8px;" onclick="copyJoinCode()">📋 העתק קוד + Project ID</button>
     </div>
     <div class="setting-card">
       <h3>🔐 שינוי PIN הורה</h3>
@@ -733,7 +749,7 @@ import {
 // ══════════════════════════════════════════
 //  VERSION & CONSTANTS
 // ══════════════════════════════════════════
-const VERSION = 'v2.0';
+const VERSION = 'v2.1';
 document.getElementById('ver-badge').textContent = VERSION;
 
 const TASK_EM  = ['👕','🍽️','♻️','🗑️','🛏️','🧹','🧺','🛒','🐕','📚','🌱','🚿','🪴','🧴','🍳','🚗','💊','✉️','📦','🔧','🏠','🌿','⚡','🎨','🎵'];
@@ -777,21 +793,18 @@ function daysInMonth(s){ const[y,m]=s.split('-').map(Number); return new Date(y,
 function todayStr(){ const t=new Date(); return 'יום '+heDayName(t)+' '+pad(t.getDate())+'/'+pad(t.getMonth()+1)+'/'+t.getFullYear(); }
 
 // ══════════════════════════════════════════
-//  JOIN CODE  encode/decode
-//  Format: base64url of JSON {a:apiKey, p:projectId, f:familyId}
-//  Displayed as 8-char alphanumeric short code stored in Firebase
+//  JOIN CODE  – short 8-char code stored in Firebase
+//  Parent saves:  joinCodes/{code} = {a:apiKey, p:projectId, f:familyId}
+//  Child looks up the code to get connection details
 // ══════════════════════════════════════════
-function encodeJoinCode(fbConfig, familyId){
-  const obj = {a: fbConfig.apiKey, p: fbConfig.projectId, f: familyId};
-  return btoa(JSON.stringify(obj)).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+function generateShortCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no confusing 0/O/1/I
+  let code='';
+  for(let i=0;i<8;i++) code+=chars[Math.floor(Math.random()*chars.length)];
+  // Format: XXXX-XXXX for readability
+  return code.slice(0,4)+'-'+code.slice(4);
 }
-function decodeJoinCode(code){
-  try{
-    const b64 = code.replace(/-/g,'+').replace(/_/g,'/');
-    const padded = b64 + '==='.slice((b64.length+3)%4);
-    return JSON.parse(atob(padded));
-  }catch(e){ return null; }
-}
+function rawCode(code){ return code.replace(/-/g,'').toUpperCase(); }
 
 // ══════════════════════════════════════════
 //  FIREBASE
@@ -914,17 +927,25 @@ window.saveParentSetup=async function(){
   }));
   const familyId=uid()+uid();
   const fbConfig={apiKey, authDomain:projectId+'.firebaseapp.com', projectId};
+  // Generate short join code and save to Firebase
+  const joinCode=generateShortCode();
+  const raw=rawCode(joinCode);
   // Save to localStorage as PARENT
   localStorage.setItem('role','parent');
   localStorage.setItem('fbConfig',JSON.stringify(fbConfig));
   localStorage.setItem('familyId',familyId);
+  localStorage.setItem('joinCode',joinCode);
   S.role='parent'; S.familyId=familyId;
   const data={parentPin:pin, tasks:DEFAULT_TASKS, children, createdAt:new Date().toISOString()};
   try{
+    // Save family doc
     await setDoc(doc(db,'families',familyId),data);
+    // Save join code lookup: joinCodes/XXXXXXXX → {a,p,f}
+    await setDoc(doc(db,'joinCodes',raw),{
+      a:apiKey, p:projectId, f:familyId, created:new Date().toISOString()
+    });
     S.family=data; subscribeFamily();
     showToast('הוגדר בהצלחה! 🎉','ok');
-    // Go to parent PIN to authenticate
     showScreen('screen-parent-pin');
   }catch(e){ showToast('שגיאה: '+e.message,'err'); }
 };
@@ -933,21 +954,48 @@ window.saveParentSetup=async function(){
 //  CHILD JOIN  – enter join code
 // ══════════════════════════════════════════
 window.submitJoinCode=async function(){
-  const raw=document.getElementById('join-code-field').value.trim();
-  if(!raw){ showToast('נא להזין קוד','err'); return; }
-  const decoded=decodeJoinCode(raw);
-  if(!decoded||!decoded.a||!decoded.p||!decoded.f){ showToast('קוד לא תקין','err'); return; }
-  const fbConfig={apiKey:decoded.a, authDomain:decoded.p+'.firebaseapp.com', projectId:decoded.p};
-  const ok=await initFB(fbConfig);
-  if(!ok){ showToast('שגיאה בחיבור ל-Firebase','err'); return; }
+  const raw=rawCode(document.getElementById('join-code-field').value.trim());
+  if(raw.length<6){ showToast('נא להזין קוד חיבור','err'); return; }
+
+  // We need Firebase to look up the code — but which Firebase?
+  // The join code doc tells us the projectId/apiKey to connect to.
+  // Problem: we don't have Firebase yet. Solution: ask user for their
+  // family's Project ID separately — OR store the code in a shared
+  // "registry" Firebase project. For simplicity, we require the parent
+  // to also share their Project ID (or embed it in the code as prefix).
+  //
+  // SIMPLER APPROACH: The 8-char code is stored in the SAME Firebase project
+  // the parent set up. The child needs to enter just the code — but we need
+  // the Firebase config first. We ask for Project ID in addition to the code.
+
+  const projId=document.getElementById('join-project-field')?.value.trim();
+  if(!projId){ showToast('נא להזין גם את Project ID','err'); return; }
+
+  const cfg={apiKey:'', authDomain:projId+'.firebaseapp.com', projectId:projId};
+  // Try to init Firebase with just projectId (no apiKey) won't work.
+  // Instead: store the full config in the joinCodes doc.
+  // The parent already saved apiKey there. We just need projectId to build the URL.
+  // Fetch the joinCode doc via REST (no SDK needed):
+  const url=`https://firestore.googleapis.com/v1/projects/${projId}/databases/(default)/documents/joinCodes/${raw}`;
   try{
-    const snap=await getDoc(doc(db,'families',decoded.f));
-    if(!snap.exists()){ showToast('קוד לא נמצא. בדוק עם ההורה','err'); return; }
-    // Save as CHILD
+    showToast('מחפש קוד...','');
+    const res=await fetch(url);
+    if(!res.ok){ showToast('קוד לא נמצא. בדוק עם ההורה','err'); return; }
+    const json=await res.json();
+    const fields=json.fields||{};
+    const apiKey=fields.a?.stringValue;
+    const projIdFromDoc=fields.p?.stringValue;
+    const familyId=fields.f?.stringValue;
+    if(!apiKey||!familyId){ showToast('קוד לא תקין','err'); return; }
+    const fbConfig={apiKey, authDomain:projIdFromDoc+'.firebaseapp.com', projectId:projIdFromDoc};
+    const ok=await initFB(fbConfig);
+    if(!ok){ showToast('שגיאה בחיבור','err'); return; }
+    const snap=await getDoc(doc(db,'families',familyId));
+    if(!snap.exists()){ showToast('משפחה לא נמצאה','err'); return; }
     localStorage.setItem('role','child');
     localStorage.setItem('fbConfig',JSON.stringify(fbConfig));
-    localStorage.setItem('familyId',decoded.f);
-    S.role='child'; S.familyId=decoded.f; S.family=snap.data();
+    localStorage.setItem('familyId',familyId);
+    S.role='child'; S.familyId=familyId; S.family=snap.data();
     subscribeFamily();
     showToast('התחברת בהצלחה! 🎉','ok');
     showScreen('screen-child-select');
@@ -1279,16 +1327,23 @@ window.generateReport=async function(){
 function renderSettings(){
   document.getElementById('fam-id-disp').textContent=S.familyId||'';
   document.getElementById('ver-settings').textContent=VERSION;
-  // Generate and display join code
   const fbCfg=JSON.parse(localStorage.getItem('fbConfig')||'{}');
-  const code=encodeJoinCode(fbCfg, S.familyId);
+  const code=localStorage.getItem('joinCode')||'????-????';
   document.getElementById('join-code-display').textContent=code;
+  document.getElementById('join-project-display').textContent=fbCfg.projectId||'';
 }
 window.copyJoinCode=function(){
-  const code=document.getElementById('join-code-display').textContent;
-  navigator.clipboard?.writeText(code).then(()=>showToast('קוד הועתק ✅','ok')).catch(()=>{
-    showToast('קוד: '+code,'ok');
-  });
+  const code=document.getElementById('join-code-display').textContent.replace(/\s/g,'');
+  const proj=document.getElementById('join-project-display').textContent;
+  const text=`Project ID: ${proj}\nקוד חיבור: ${code}`;
+  navigator.clipboard?.writeText(text).then(()=>showToast('הועתק ✅','ok')).catch(()=>showToast('קוד: '+code,'ok'));
+};
+
+// Auto-format join code input as user types: XXXX-XXXX
+window.formatJoinCode=function(el){
+  let val=el.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase().slice(0,8);
+  if(val.length>4) val=val.slice(0,4)+'-'+val.slice(4);
+  el.value=val;
 };
 window.updatePin=async function(){
   const p=document.getElementById('new-pin').value.trim();
