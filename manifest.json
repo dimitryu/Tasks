@@ -2,14 +2,30 @@
   "name": "משימות ילדים ⭐",
   "short_name": "משימות",
   "description": "אפליקציית מעקב משימות ותגמולים לילדים",
-  "start_url": ".",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "background_color": "#FF8C42",
   "theme_color": "#FF8C42",
   "lang": "he",
   "dir": "rtl",
+  "categories": [
+    "productivity",
+    "education"
+  ],
   "icons": [
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
   ]
 }
