@@ -298,7 +298,7 @@
 </head>
 <body>
 
-<div class="ver" id="ver-badge">v2.2</div>
+<div class="ver" id="ver-badge">v2.3</div>
 
 <!-- LOADING -->
 <div id="screen-loading" class="screen active">
@@ -573,6 +573,19 @@
       <label class="form-label">ילד/ה</label>
       <select class="form-input" id="report-child-sel" onchange="generateReport()"><option value="all">כל הילדים</option></select>
     </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">מתאריך</label>
+        <input type="date" class="form-input" id="report-date-from" onchange="toggleReportNav();generateReport()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">עד תאריך</label>
+        <input type="date" class="form-input" id="report-date-to" onchange="toggleReportNav();generateReport()">
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;">
+      <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="clearReportDates()">נקה תאריכים</button>
+    </div>
   </div>
   <div class="month-nav no-print">
     <button onclick="changeMonth('report',-1)">‹</button>
@@ -749,7 +762,7 @@ import {
 // ══════════════════════════════════════════
 //  VERSION & CONSTANTS
 // ══════════════════════════════════════════
-const VERSION = 'v2.2';
+const VERSION = 'v2.3';
 document.getElementById('ver-badge').textContent = VERSION;
 
 const TASK_EM  = ['👕','🍽️','♻️','🗑️','🛏️','🧹','🧺','🛒','🐕','📚','🌱','🚿','🪴','🧴','🍳','🚗','💊','✉️','📦','🔧','🏠','🌿','⚡','🎨','🎵'];
@@ -1170,14 +1183,20 @@ function mkComp(c,del=false){
   const t=S.family.tasks.find(t=>t.id===c.taskId);
   const div=document.createElement('div'); div.className='comp-item';
   div.innerHTML=`<span class="comp-emoji">${t?t.emoji:'✅'}</span>
-    <div class="comp-info"><div class="comp-name">${c.taskName}</div><div class="comp-meta">${c.childName} • ${fmtTime(c.timestamp)}</div></div>
+    <div class="comp-info"><div class="comp-name">${c.taskName}</div><div class="comp-meta">${c.childName} • ${fmtDate(c.date)} ${fmtTime(c.timestamp)}</div></div>
     <div class="comp-price">+${c.price}₪</div>
     ${del?`<button class="del-btn" onclick="delComp('${c.id}')">🗑️</button>`:''}`;
   return div;
 }
 window.delComp=async function(id){
   if(!confirm('למחוק?'))return;
-  try{await deleteDoc(doc(db,'completions',id));showToast('נמחק','ok');renderToday();renderParentHome();}
+  try{
+    await deleteDoc(doc(db,'completions',id));
+    showToast('נמחק','ok');
+    const act=document.querySelector('.screen.active');
+    if(act?.id==='screen-child-home') renderChildHome();
+    else { renderToday(); renderParentHome(); }
+  }
   catch(e){showToast('שגיאה','err');}
 };
 
@@ -1275,6 +1294,9 @@ function initReport(){
   const sel=document.getElementById('report-child-sel');
   sel.innerHTML='<option value="all">כל הילדים</option>';
   S.family.children.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o);});
+  // Clear date range on open
+  document.getElementById('report-date-from').value='';
+  document.getElementById('report-date-to').value='';
   document.getElementById('report-month-lbl').textContent=fmtMonth(S.reportMonth);
   generateReport();
 }
@@ -1285,10 +1307,26 @@ window.changeMonth=function(ctx,d){
 function shiftM(s,d){let[y,m]=[...s.split('-').map(Number)];m+=d;if(m>12){m=1;y++;}if(m<1){m=12;y--;}return y+'-'+pad(m);}
 window.generateReport=async function(){
   const childId=document.getElementById('report-child-sel')?.value||'all';
+  const dateFrom=document.getElementById('report-date-from')?.value||'';
+  const dateTo=document.getElementById('report-date-to')?.value||'';
   const el=document.getElementById('report-content');
   el.innerHTML=`<div class="empty"><div class="empty-icon">⏳</div></div>`;
-  const comps=await getCompletions({month:S.reportMonth,childId});
-  if(!comps.length){el.innerHTML=`<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">אין נתונים ל-${fmtMonth(S.reportMonth)}</div></div>`;return;}
+
+  // Fetch by month or by date range
+  let comps;
+  if(dateFrom||dateTo){
+    // Date range mode: fetch all then filter
+    comps=await getCompletions({childId});
+    if(dateFrom) comps=comps.filter(c=>c.date>=dateFrom);
+    if(dateTo)   comps=comps.filter(c=>c.date<=dateTo);
+  } else {
+    comps=await getCompletions({month:S.reportMonth,childId});
+  }
+
+  if(!comps.length){
+    const label=(dateFrom||dateTo)?`${dateFrom?fmtDate(dateFrom):''}–${dateTo?fmtDate(dateTo):''}`:`${fmtMonth(S.reportMonth)}`;
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">אין נתונים ל-${label}</div></div>`;return;
+  }
   el.innerHTML='';
   const grand=comps.reduce((s,c)=>s+c.price,0);
   if(childId==='all'){
@@ -1312,13 +1350,25 @@ window.generateReport=async function(){
   } else {
     const ch=S.family.children.find(c=>c.id===childId);
     const wrap=document.createElement('div');
-    wrap.innerHTML=`<div style="display:flex;align-items:center;gap:7px;padding:6px 0;"><span style="font-size:30px;">${ch?ch.avatar:'👤'}</span><div style="font-weight:900;font-size:16px;">${ch?ch.name:''} – ${fmtMonth(S.reportMonth)}</div></div>
+    wrap.innerHTML=`<div style="display:flex;align-items:center;gap:7px;padding:6px 0;"><span style="font-size:30px;">${ch?ch.avatar:'👤'}</span><div style="font-weight:900;font-size:16px;">${ch?ch.name:''}</div></div>
       <div class="card" style="overflow:hidden;padding:0;"><table class="report-table"><thead><tr><th>תאריך</th><th>שעה</th><th>משימה</th><th>₪</th></tr></thead><tbody>${comps.map(c=>`<tr><td>${fmtDate(c.date)}</td><td style="direction:ltr;font-size:11px;">${fmtTime(c.timestamp)}</td><td>${c.taskName}</td><td style="color:var(--success);font-weight:800;">+${c.price}</td></tr>`).join('')}</tbody></table></div>`;
     el.appendChild(wrap);
   }
   const bar=document.createElement('div');bar.className='report-total-bar';
-  bar.innerHTML=`<span style="font-size:13px;font-weight:700;opacity:.9;">💰 סה"כ ${fmtMonth(S.reportMonth)}</span><span style="font-size:22px;font-weight:900;">${grand}₪</span>`;
+  bar.innerHTML=`<span style="font-size:13px;font-weight:700;opacity:.9;">💰 סה"כ</span><span style="font-size:22px;font-weight:900;">${grand}₪</span>`;
   el.appendChild(bar);
+};
+
+window.clearReportDates=function(){
+  document.getElementById('report-date-from').value='';
+  document.getElementById('report-date-to').value='';
+  toggleReportNav();
+  generateReport();
+};
+window.toggleReportNav=function(){
+  const hasRange=document.getElementById('report-date-from').value||document.getElementById('report-date-to').value;
+  const nav=document.querySelector('.month-nav.no-print');
+  if(nav) nav.style.display=hasRange?'none':'flex';
 };
 
 // ══════════════════════════════════════════
@@ -1426,7 +1476,7 @@ async function renderChildHome(){
   });
   const list=document.getElementById('child-today-list'); list.innerHTML='';
   if(!dayC.length){list.innerHTML='<p style="font-size:12px;color:var(--text2);text-align:center;padding:12px;">עוד לא ביצעת משימות ביום זה</p>';}
-  else[...dayC].reverse().forEach(c=>list.appendChild(mkComp(c,false)));
+  else[...dayC].reverse().forEach(c=>list.appendChild(mkComp(c,true)));
   renderChart(monthC,curMonth);
 }
 window.openConfirmTask=function(task,date){
