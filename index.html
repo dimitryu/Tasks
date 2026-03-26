@@ -34,8 +34,21 @@
     .screen{display:none;flex-direction:column;min-height:100dvh;max-width:430px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom);}
     .screen.active{display:flex;}
 
-    /* VERSION BADGE - shown on every screen */
-    .ver{position:fixed;bottom:calc(6px + env(safe-area-inset-bottom));left:8px;font-size:9px;font-weight:700;color:rgba(100,100,120,.5);z-index:500;pointer-events:none;letter-spacing:.3px;}
+    /* VERSION TOP CENTER */
+    .ver{position:fixed;top:0;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;color:rgba(130,130,150,.55);z-index:500;pointer-events:none;letter-spacing:.4px;padding-top:calc(3px + env(safe-area-inset-top));}
+
+    /* BIG ENTRY BUTTONS */
+    .big-entry-btn{display:flex;align-items:center;gap:14px;padding:18px 20px;border:2px solid var(--border);border-radius:var(--radius);background:var(--white);box-shadow:var(--shadow);font-family:'Heebo',sans-serif;cursor:pointer;transition:all .2s;text-align:right;width:100%;}
+    .big-entry-btn:active{transform:scale(.97);}
+    .child-entry-btn{border-color:var(--purple);background:linear-gradient(135deg,#f5f0ff,#ede5ff);}
+    .child-entry-btn:active{border-color:var(--purple-dark);}
+    .parent-entry-btn{border-color:var(--primary);background:linear-gradient(135deg,#fff5ee,#ffe8d4);}
+    .parent-entry-btn:active{border-color:var(--primary-dark);}
+    .big-entry-icon{font-size:42px;flex-shrink:0;}
+    .big-entry-text{flex:1;}
+    .big-entry-title{font-size:18px;font-weight:900;color:var(--text);}
+    .big-entry-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+    .big-entry-arrow{font-size:18px;color:var(--text2);}
 
     /* LOADING */
     #screen-loading{align-items:center;justify-content:center;background:linear-gradient(145deg,#FF8C42,#FFB703);}
@@ -87,21 +100,18 @@
     .form-row .form-group{flex:1;}
     .card{background:var(--white);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow-sm);border:1px solid var(--border);}
 
-    /* LOGIN - compact to fit all in one screen */
-    #screen-login{background:linear-gradient(170deg,#FFF8F2 0%,#FFF0E5 100%);overflow-y:auto;}
-    .login-top{padding:18px 18px 10px;padding-top:calc(18px + env(safe-area-inset-top));text-align:center;}
+    /* LOGIN */
+    #screen-login{background:linear-gradient(170deg,#FFF8F2 0%,#FFF0E5 100%);}
+    .login-top{padding:18px 18px 10px;padding-top:calc(28px + env(safe-area-inset-top));text-align:center;}
     .login-logo{font-size:48px;}
     .login-title{font-size:22px;font-weight:900;color:var(--primary);margin-top:6px;}
     .login-date-badge{display:inline-flex;align-items:center;gap:5px;background:var(--white);border:1.5px solid var(--border);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;color:var(--text2);margin-top:6px;box-shadow:var(--shadow-sm);}
-    .login-section{padding:8px 14px;}
-    .login-section-title{font-size:11px;font-weight:800;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
-    .children-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
-    .child-profile-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px;background:var(--white);border:2px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s;box-shadow:var(--shadow-sm);font-family:'Heebo',sans-serif;}
-    .child-profile-btn:active{transform:scale(.93);border-color:var(--purple);}
-    .child-avatar{font-size:38px;line-height:1;}
-    .child-name-text{font-size:13px;font-weight:800;color:var(--text);}
-    .parent-login-btn{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;box-shadow:var(--shadow-sm);width:100%;font-family:'Heebo',sans-serif;}
-    .parent-login-btn:active{transform:scale(.97);border-color:var(--primary);}
+    /* CHILD SELECT */
+    .children-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+    .child-profile-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 10px;background:var(--white);border:2px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s;box-shadow:var(--shadow);font-family:'Heebo',sans-serif;}
+    .child-profile-btn:active{transform:scale(.92);border-color:var(--purple);background:linear-gradient(135deg,#f5f0ff,#ede5ff);}
+    .child-avatar{font-size:46px;line-height:1;}
+    .child-name-text{font-size:14px;font-weight:800;color:var(--text);}
 
     /* PIN */
     .pin-screen-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
@@ -259,7 +269,7 @@
 </head>
 <body>
 
-<div class="ver" id="ver-badge">v1.5</div>
+<div class="ver" id="ver-badge">v1.6</div>
 
 <!-- LOADING -->
 <div id="screen-loading" class="screen active">
@@ -327,28 +337,50 @@
   </div>
 </div>
 
-<!-- LOGIN -->
+<!-- LOGIN - two big entry buttons -->
 <div id="screen-login" class="screen">
   <div class="login-top">
     <div class="login-logo">⭐</div>
     <div class="login-title">משימות ילדים</div>
     <div class="login-date-badge">📅 <span id="login-date-lbl"></span></div>
   </div>
-  <!-- Children section – always in DOM, JS shows/hides -->
-  <div class="login-section" id="children-login-section">
-    <div class="login-section-title">👧 ילדים</div>
-    <div class="children-grid" id="children-grid"></div>
-  </div>
-  <div class="login-section">
-    <div class="login-section-title">👨‍👩‍👧 הורה</div>
-    <button class="parent-login-btn" onclick="showScreen('screen-parent-pin')">
-      <span style="font-size:30px;">🔐</span>
-      <div style="text-align:right;">
-        <div style="font-size:14px;font-weight:800;">כניסת הורה</div>
-        <div style="font-size:11px;color:var(--text2);">ניהול משימות ודוחות</div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:16px 20px;gap:14px;">
+    <!-- Big child entry button -->
+    <button class="big-entry-btn child-entry-btn" onclick="showScreen('screen-child-select')">
+      <span class="big-entry-icon">👧</span>
+      <div class="big-entry-text">
+        <div class="big-entry-title">כניסת ילדים</div>
+        <div class="big-entry-sub">בחר את הפרופיל שלך</div>
       </div>
-      <span style="margin-right:auto;font-size:16px;color:var(--text2);">←</span>
+      <span class="big-entry-arrow">←</span>
     </button>
+    <!-- Big parent entry button -->
+    <button class="big-entry-btn parent-entry-btn" onclick="showScreen('screen-parent-pin')">
+      <span class="big-entry-icon">🔐</span>
+      <div class="big-entry-text">
+        <div class="big-entry-title">כניסת הורה</div>
+        <div class="big-entry-sub">ניהול משימות ודוחות</div>
+      </div>
+      <span class="big-entry-arrow">←</span>
+    </button>
+  </div>
+</div>
+
+<!-- CHILD SELECT - pick which child -->
+<div id="screen-child-select" class="screen">
+  <div class="app-header">
+    <button class="header-back" onclick="showScreen('screen-login')">→</button>
+    <span class="header-title">👧 בחר פרופיל</span>
+    <span style="width:34px;"></span>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:20px;">
+    <div style="font-size:13px;font-weight:800;color:var(--text2);text-align:center;margin-bottom:16px;">מי אתה?</div>
+    <div class="children-grid" id="children-grid"></div>
+    <div id="no-children-msg" style="display:none;text-align:center;padding:30px 0;">
+      <div style="font-size:46px;margin-bottom:10px;">😕</div>
+      <div style="font-size:15px;font-weight:700;color:var(--text2);">אין ילדים מוגדרים עדיין</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:6px;">בקש מההורה להוסיף אותך</div>
+    </div>
   </div>
 </div>
 
@@ -637,7 +669,7 @@ import {
   collection, addDoc, query, where, getDocs, onSnapshot, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-const VERSION = 'v1.5';
+const VERSION = 'v1.6';
 document.getElementById('ver-badge').textContent = VERSION;
 
 // ── STATE ──
@@ -680,7 +712,8 @@ window.showScreen=function(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById(id); if(el) el.classList.add('active');
   // Always render login when showing it
-  if(id==='screen-login')           { renderLoginDate(); renderChildButtons(); }
+  if(id==='screen-login')           { renderLoginDate(); }
+  if(id==='screen-child-select')    { renderChildButtons(); }
   if(id==='screen-parent-home')     renderParentHome();
   if(id==='screen-parent-tasks')    renderTasks();
   if(id==='screen-parent-children') renderChildren();
@@ -701,19 +734,17 @@ function renderLoginDate(){
 }
 
 /**
- * Render child buttons.
- * Called every time family data changes or login screen shows.
- * Uses innerHTML to fully rebuild – never leaves stale state.
+ * Render child buttons on the child-select screen.
+ * Called whenever family data updates or child-select screen is shown.
  */
 function renderChildButtons(){
   const children=(S.family&&S.family.children)||[];
   const grid=document.getElementById('children-grid');
-  const sec=document.getElementById('children-login-section');
-  if(!grid||!sec) return;
-
+  const noMsg=document.getElementById('no-children-msg');
+  if(!grid) return;
+  grid.innerHTML='';
   if(children.length>0){
-    sec.style.display='block';
-    grid.innerHTML='';
+    if(noMsg) noMsg.style.display='none';
     children.forEach(c=>{
       const btn=document.createElement('button');
       btn.className='child-profile-btn';
@@ -725,12 +756,11 @@ function renderChildButtons(){
       grid.appendChild(btn);
     });
   } else {
-    sec.style.display='none';
-    grid.innerHTML='';
+    if(noMsg) noMsg.style.display='block';
   }
 }
 
-function showLoginScreen(){ renderLoginDate(); renderChildButtons(); showScreen('screen-login'); }
+function showLoginScreen(){ renderLoginDate(); showScreen('screen-login'); }
 
 function loginChild(c){
   if(c.pin&&c.pin.length===4){
@@ -740,6 +770,8 @@ function loginChild(c){
     document.getElementById('child-pin-nm').textContent=c.name;
     document.getElementById('child-pin-hdr').textContent='כניסה – '+c.name;
     document.getElementById('child-pin-error').textContent='';
+    // back from child-pin goes to child-select
+    document.getElementById('screen-child-pin').querySelector('.header-back').onclick=()=>showScreen('screen-child-select');
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     document.getElementById('screen-child-pin').classList.add('active');
   } else {
@@ -850,12 +882,9 @@ function subscribeFamily(){
   S.unsub=onSnapshot(doc(db,'families',S.familyId),snap=>{
     if(!snap.exists()) return;
     S.family=snap.data();
-    // Always rebuild child buttons – even if login screen not active,
-    // so they're ready when user navigates there.
-    renderChildButtons();
+    renderChildButtons(); // always refresh child grid
     const act=document.querySelector('.screen.active');
     if(!act) return;
-    if(act.id==='screen-login')           renderChildButtons(); // double-ensure
     if(act.id==='screen-parent-tasks')    renderTasks();
     if(act.id==='screen-parent-children') renderChildren();
     if(act.id==='screen-parent-home')     renderParentHome();
