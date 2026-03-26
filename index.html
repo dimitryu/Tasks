@@ -23,10 +23,9 @@
       --purple:#7C5CBF;--purple-dark:#5E3FA3;
       --bg:#FFF8F2;--bg2:#FFF0E5;--white:#FFFFFF;
       --text:#1A2332;--text2:#6B7A8D;--border:rgba(0,0,0,0.08);
-      --shadow-sm:0 2px 6px rgba(255,140,66,0.10);
+      --shadow-sm:0 2px 6px rgba(0,0,0,0.07);
       --shadow:0 3px 14px rgba(255,140,66,0.16);
       --radius:16px;--radius-sm:12px;--radius-xs:8px;
-      --ver-bg:rgba(0,0,0,0.12);
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{height:100%;overscroll-behavior:none;}
@@ -34,41 +33,46 @@
     .screen{display:none;flex-direction:column;min-height:100dvh;max-width:430px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom);}
     .screen.active{display:flex;}
 
-    /* VERSION TOP CENTER */
-    .ver{position:fixed;top:0;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;color:rgba(130,130,150,.55);z-index:500;pointer-events:none;letter-spacing:.4px;padding-top:calc(3px + env(safe-area-inset-top));}
-
-    /* BIG ENTRY BUTTONS */
-    .big-entry-btn{display:flex;align-items:center;gap:14px;padding:18px 20px;border:2px solid var(--border);border-radius:var(--radius);background:var(--white);box-shadow:var(--shadow);font-family:'Heebo',sans-serif;cursor:pointer;transition:all .2s;text-align:right;width:100%;}
-    .big-entry-btn:active{transform:scale(.97);}
-    .child-entry-btn{border-color:var(--purple);background:linear-gradient(135deg,#f5f0ff,#ede5ff);}
-    .child-entry-btn:active{border-color:var(--purple-dark);}
-    .parent-entry-btn{border-color:var(--primary);background:linear-gradient(135deg,#fff5ee,#ffe8d4);}
-    .parent-entry-btn:active{border-color:var(--primary-dark);}
-    .big-entry-icon{font-size:42px;flex-shrink:0;}
-    .big-entry-text{flex:1;}
-    .big-entry-title{font-size:18px;font-weight:900;color:var(--text);}
-    .big-entry-sub{font-size:12px;color:var(--text2);margin-top:2px;}
-    .big-entry-arrow{font-size:18px;color:var(--text2);}
-
-    /* LOADING */
-    #screen-loading{align-items:center;justify-content:center;background:linear-gradient(145deg,#FF8C42,#FFB703);}
-    .loading-logo{font-size:64px;animation:floatBounce 1.8s ease-in-out infinite;}
-    .loading-title{font-size:24px;font-weight:900;color:white;margin-top:10px;}
-    .loading-sub{font-size:13px;color:rgba(255,255,255,.8);margin-top:3px;}
-    .spinner{width:30px;height:30px;border:3px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite;margin-top:20px;}
+    /* VERSION - top center, visible */
+    .ver{position:fixed;top:0;left:50%;transform:translateX(-50%);font-size:12px;font-weight:800;color:rgba(120,120,140,.5);z-index:500;pointer-events:none;padding-top:calc(4px + env(safe-area-inset-top));}
 
     @keyframes spin{to{transform:rotate(360deg);}}
-    @keyframes floatBounce{0%,100%{transform:translateY(0) rotate(-5deg);}50%{transform:translateY(-10px) rotate(5deg);}}
+    @keyframes floatBounce{0%,100%{transform:translateY(0) rotate(-4deg);}50%{transform:translateY(-10px) rotate(4deg);}}
     @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
     @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
     @keyframes pop{0%{transform:scale(.8);opacity:0;}80%{transform:scale(1.08);}100%{transform:scale(1);opacity:1;}}
     @keyframes cfFall{0%{transform:translateY(-10px) rotate(0);opacity:1;}100%{transform:translateY(105vh) rotate(720deg);opacity:0;}}
 
-    /* SETUP */
-    #screen-setup{overflow-y:auto;}
-    .setup-hero{background:linear-gradient(145deg,#FF8C42,#FFB703);padding:24px 20px 22px;padding-top:calc(24px + env(safe-area-inset-top));color:white;text-align:center;}
+    /* LOADING */
+    #screen-loading{align-items:center;justify-content:center;background:linear-gradient(145deg,#FF8C42,#FFB703);}
+    .loading-logo{font-size:70px;animation:floatBounce 1.8s ease-in-out infinite;}
+    .loading-title{font-size:24px;font-weight:900;color:white;margin-top:10px;}
+    .loading-sub{font-size:13px;color:rgba(255,255,255,.8);margin-top:3px;}
+    .spinner{width:30px;height:30px;border:3px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite;margin-top:20px;}
+
+    /* ═══════════════════════════════════
+       WELCOME SCREEN  (first launch)
+    ═══════════════════════════════════ */
+    #screen-welcome{background:linear-gradient(160deg,#FFF8F2,#FFF0E5);align-items:center;justify-content:center;padding:24px;}
+    .welcome-logo{font-size:72px;animation:floatBounce 2s ease-in-out infinite;margin-bottom:10px;}
+    .welcome-title{font-size:26px;font-weight:900;color:var(--primary);margin-bottom:4px;}
+    .welcome-sub{font-size:14px;color:var(--text2);margin-bottom:32px;}
+    .welcome-btn{display:flex;align-items:center;gap:14px;padding:20px 22px;border-radius:var(--radius);border:2px solid;width:100%;font-family:'Heebo',sans-serif;cursor:pointer;transition:all .2s;margin-bottom:14px;text-align:right;}
+    .welcome-btn:active{transform:scale(.97);}
+    .welcome-btn-parent{background:linear-gradient(135deg,#fff5ee,#ffe0c4);border-color:var(--primary);}
+    .welcome-btn-child{background:linear-gradient(135deg,#f3f0ff,#e4deff);border-color:var(--purple);}
+    .welcome-btn-icon{font-size:44px;flex-shrink:0;}
+    .welcome-btn-title{font-size:18px;font-weight:900;color:var(--text);}
+    .welcome-btn-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+    .welcome-btn-arrow{font-size:18px;color:var(--text2);margin-right:auto;}
+
+    /* ═══════════════════════════════════
+       PARENT SETUP
+    ═══════════════════════════════════ */
+    #screen-parent-setup{overflow-y:auto;}
+    .setup-hero{background:linear-gradient(145deg,#FF8C42,#FFB703);padding:22px 20px 20px;padding-top:calc(22px + env(safe-area-inset-top));color:white;text-align:center;}
     .setup-hero h1{font-size:22px;font-weight:900;}
-    .setup-hero p{font-size:13px;opacity:.9;margin-top:5px;line-height:1.5;}
+    .setup-hero p{font-size:13px;opacity:.9;margin-top:4px;line-height:1.5;}
     .setup-body{padding:14px;}
     .step-row{display:flex;gap:12px;margin-bottom:18px;align-items:flex-start;}
     .step-num{min-width:28px;height:28px;background:var(--primary);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
@@ -76,44 +80,87 @@
     .step-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px;}
     .code-block{background:#1e2a3a;color:#79d4f5;padding:10px;border-radius:var(--radius-xs);font-family:monospace;font-size:10px;overflow-x:auto;direction:ltr;text-align:left;line-height:1.7;}
 
-    /* HEADER */
+    /* ═══════════════════════════════════
+       CHILD JOIN
+    ═══════════════════════════════════ */
+    #screen-child-join{background:linear-gradient(160deg,#f3f0ff,#e8e0ff);align-items:center;justify-content:center;padding:24px;}
+    .child-join-icon{font-size:60px;margin-bottom:14px;animation:floatBounce 2.2s ease-in-out infinite;}
+    .child-join-title{font-size:22px;font-weight:900;color:var(--purple);margin-bottom:6px;}
+    .child-join-sub{font-size:13px;color:var(--text2);margin-bottom:24px;text-align:center;line-height:1.6;}
+    .join-code-input{width:100%;padding:16px;border:2.5px solid var(--purple);border-radius:var(--radius);font-family:'Heebo',sans-serif;font-size:20px;font-weight:800;text-align:center;color:var(--text);background:var(--white);letter-spacing:2px;-webkit-appearance:none;margin-bottom:12px;}
+    .join-code-input:focus{outline:none;border-color:var(--purple-dark);}
+    .join-code-input::placeholder{font-size:14px;font-weight:400;letter-spacing:0;color:var(--text2);}
+    .join-back-btn{background:none;border:none;color:var(--text2);font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;padding:8px;}
+
+    /* ═══════════════════════════════════
+       SHARED: HEADER, BTNS, INPUTS
+    ═══════════════════════════════════ */
     .app-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top));background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
     .header-title{font-size:15px;font-weight:800;}
     .header-back{background:none;border:none;font-size:20px;cursor:pointer;padding:4px 8px;border-radius:var(--radius-xs);color:var(--text);line-height:1;}
     .header-btn{background:var(--bg2);border:none;width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-
-    /* BUTTONS - compact */
     .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 16px;border:none;border-radius:var(--radius-sm);font-family:'Heebo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;width:100%;}
     .btn:active{transform:scale(.97);}
     .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:white;box-shadow:var(--shadow);}
     .btn-purple{background:linear-gradient(135deg,var(--purple),var(--purple-dark));color:white;}
     .btn-success{background:var(--success);color:white;}
     .btn-ghost{background:var(--bg2);color:var(--text);border:1.5px solid var(--border);}
-
-    /* INPUTS */
+    .btn-sm{padding:8px 14px;font-size:13px;}
     .form-group{margin-bottom:10px;}
     .form-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px;}
     .form-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Heebo',sans-serif;font-size:14px;color:var(--text);background:var(--white);direction:rtl;transition:border-color .2s;-webkit-appearance:none;}
     .form-input:focus{outline:none;border-color:var(--primary);}
     input[type=date].form-input{direction:ltr;text-align:left;}
-    .form-row{display:flex;gap:8px;}
-    .form-row .form-group{flex:1;}
     .card{background:var(--white);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow-sm);border:1px solid var(--border);}
 
-    /* LOGIN */
-    #screen-login{background:linear-gradient(170deg,#FFF8F2 0%,#FFF0E5 100%);}
-    .login-top{padding:18px 18px 10px;padding-top:calc(28px + env(safe-area-inset-top));text-align:center;}
-    .login-logo{font-size:48px;}
-    .login-title{font-size:22px;font-weight:900;color:var(--primary);margin-top:6px;}
-    .login-date-badge{display:inline-flex;align-items:center;gap:5px;background:var(--white);border:1.5px solid var(--border);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;color:var(--text2);margin-top:6px;box-shadow:var(--shadow-sm);}
-    /* CHILD SELECT */
-    .children-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
-    .child-profile-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 10px;background:var(--white);border:2px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s;box-shadow:var(--shadow);font-family:'Heebo',sans-serif;}
-    .child-profile-btn:active{transform:scale(.92);border-color:var(--purple);background:linear-gradient(135deg,#f5f0ff,#ede5ff);}
-    .child-avatar{font-size:46px;line-height:1;}
-    .child-name-text{font-size:14px;font-weight:800;color:var(--text);}
+    /* ═══════════════════════════════════
+       PARENT HOME
+    ═══════════════════════════════════ */
+    #screen-parent-home{overflow-y:auto;}
+    .parent-hero{background:linear-gradient(145deg,#FF8C42,#FFB703);padding:14px 16px 38px;padding-top:calc(14px + env(safe-area-inset-top));color:white;position:relative;overflow:hidden;}
+    .parent-hero::after{content:'⭐';position:absolute;font-size:160px;opacity:.07;top:-20px;right:-30px;line-height:1;pointer-events:none;}
+    .parent-hero-top{display:flex;justify-content:space-between;align-items:center;}
+    .parent-hero h1{font-size:17px;font-weight:900;margin-top:3px;}
+    .logout-btn{background:rgba(255,255,255,.2);border:none;color:white;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;}
+    .stats-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:-18px 12px 0;position:relative;z-index:10;}
+    .stat-card{background:var(--white);border-radius:var(--radius-sm);padding:10px 6px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border);}
+    .stat-num{font-size:17px;font-weight:900;color:var(--primary);}
+    .stat-lbl{font-size:10px;color:var(--text2);margin-top:1px;font-weight:600;}
+    .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 12px 4px;}
+    .menu-card{background:var(--white);border-radius:var(--radius-sm);padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:all .2s;border:1px solid var(--border);box-shadow:var(--shadow-sm);text-align:center;}
+    .menu-card:active{transform:scale(.94);}
+    .menu-icon{font-size:26px;line-height:1;}
+    .menu-label{font-size:11px;font-weight:800;}
+    .kids-money-strip{padding:0 12px 4px;overflow-x:auto;display:flex;gap:6px;scrollbar-width:none;margin-top:8px;}
+    .kids-money-strip::-webkit-scrollbar{display:none;}
+    .kid-money-card{flex-shrink:0;background:var(--white);border-radius:var(--radius-sm);padding:6px 10px;border:1px solid var(--border);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:6px;min-width:0;flex:1;max-width:140px;}
+    .kid-money-avatar{font-size:20px;flex-shrink:0;}
+    .kid-money-name{font-size:10px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .kid-money-amount{font-size:14px;font-weight:900;color:var(--success);}
+    .kid-money-total{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:white;}
+    .kid-money-total .kid-money-amount{color:white;}
+    .kid-money-total .kid-money-name{color:rgba(255,255,255,.85);}
 
-    /* PIN */
+    /* ═══════════════════════════════════
+       COMP ITEMS / MANAGE ITEMS
+    ═══════════════════════════════════ */
+    .comp-item{display:flex;align-items:center;gap:10px;background:var(--white);border-radius:var(--radius-sm);padding:10px 12px;border:1px solid var(--border);margin-bottom:6px;}
+    .comp-emoji{font-size:24px;}
+    .comp-info{flex:1;}
+    .comp-name{font-size:13px;font-weight:700;}
+    .comp-meta{font-size:11px;color:var(--text2);}
+    .comp-price{font-size:13px;font-weight:800;color:var(--success);}
+    .del-btn{background:none;border:none;font-size:14px;cursor:pointer;padding:3px 5px;opacity:.5;}
+    .task-manage-item,.child-manage-item{display:flex;align-items:center;gap:10px;background:var(--white);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);margin-bottom:6px;}
+    .task-m-emoji{font-size:30px;}
+    .task-m-info{flex:1;}
+    .task-m-name{font-size:14px;font-weight:700;}
+    .task-m-price{font-size:12px;color:var(--success);font-weight:700;margin-top:1px;}
+    .icon-btn{background:var(--bg2);border:none;width:32px;height:32px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+    /* ═══════════════════════════════════
+       PIN SCREEN
+    ═══════════════════════════════════ */
     .pin-screen-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
     .pin-title{font-size:20px;font-weight:800;margin-bottom:6px;text-align:center;}
     .pin-sub{font-size:13px;color:var(--text2);margin-bottom:22px;text-align:center;}
@@ -128,52 +175,25 @@
     .pin-key:active{background:var(--primary);color:white;border-color:var(--primary);transform:scale(.93);}
     .pin-key.ghost{background:transparent;border-color:transparent;cursor:default;}
 
-    /* PARENT HOME - compact */
-    #screen-parent-home{overflow-y:auto;}
-    .parent-hero{background:linear-gradient(145deg,#FF8C42,#FFB703);padding:16px 16px 40px;padding-top:calc(16px + env(safe-area-inset-top));color:white;position:relative;overflow:hidden;}
-    .parent-hero::after{content:'⭐';position:absolute;font-size:160px;opacity:.08;top:-20px;right:-30px;line-height:1;pointer-events:none;}
-    .parent-hero-top{display:flex;justify-content:space-between;align-items:center;}
-    .parent-hero h1{font-size:17px;font-weight:900;margin-top:3px;}
-    .logout-btn{background:rgba(255,255,255,.2);border:none;color:white;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;}
-    .stats-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:-20px 12px 0;position:relative;z-index:10;}
-    .stat-card{background:var(--white);border-radius:var(--radius-sm);padding:10px 6px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border);}
-    .stat-num{font-size:17px;font-weight:900;color:var(--primary);}
-    .stat-lbl{font-size:10px;color:var(--text2);margin-top:1px;font-weight:600;}
-    .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 12px 4px;}
-    .menu-card{background:var(--white);border-radius:var(--radius-sm);padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:all .2s;border:1px solid var(--border);box-shadow:var(--shadow-sm);text-align:center;}
-    .menu-card:active{transform:scale(.94);}
-    .menu-icon{font-size:26px;line-height:1;}
-    .menu-label{font-size:11px;font-weight:800;}
+    /* ═══════════════════════════════════
+       CHILD SELECT  (on child device)
+    ═══════════════════════════════════ */
+    #screen-child-select{background:linear-gradient(160deg,#f3f0ff,#e8e0ff);}
+    .child-select-top{padding:24px 20px 16px;padding-top:calc(24px + env(safe-area-inset-top));text-align:center;}
+    .child-select-logo{font-size:52px;animation:floatBounce 2s ease-in-out infinite;}
+    .child-select-title{font-size:20px;font-weight:900;color:var(--purple);margin-top:8px;}
+    .child-select-date{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.7);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;color:var(--text2);margin-top:6px;}
+    .children-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 16px;}
+    .child-profile-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 10px;background:var(--white);border:2px solid rgba(124,92,191,.2);border-radius:var(--radius);cursor:pointer;transition:all .2s;box-shadow:var(--shadow);font-family:'Heebo',sans-serif;}
+    .child-profile-btn:active{transform:scale(.92);border-color:var(--purple);background:linear-gradient(135deg,#f5f0ff,#ede5ff);}
+    .child-avatar{font-size:46px;line-height:1;}
+    .child-name-text{font-size:14px;font-weight:800;color:var(--text);}
+    .child-select-footer{padding:16px;text-align:center;}
+    .child-select-footer button{background:none;border:none;font-family:'Heebo',sans-serif;font-size:11px;color:var(--text2);cursor:pointer;opacity:.7;}
 
-    /* KIDS MONEY STRIP */
-    .kids-money-strip{padding:0 12px 4px;overflow-x:auto;display:flex;gap:6px;scrollbar-width:none;margin-top:8px;}
-    .kids-money-strip::-webkit-scrollbar{display:none;}
-    .kid-money-card{flex-shrink:0;background:var(--white);border-radius:var(--radius-sm);padding:6px 10px;border:1px solid var(--border);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:6px;min-width:0;flex:1;max-width:140px;}
-    .kid-money-avatar{font-size:20px;flex-shrink:0;}
-    .kid-money-name{font-size:10px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .kid-money-amount{font-size:14px;font-weight:900;color:var(--success);}
-    .kid-money-total{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:white;}
-    .kid-money-total .kid-money-amount{color:white;}
-    .kid-money-total .kid-money-name{color:rgba(255,255,255,.85);}
-
-    /* COMP ITEMS */
-    .comp-item{display:flex;align-items:center;gap:10px;background:var(--white);border-radius:var(--radius-sm);padding:10px 12px;border:1px solid var(--border);margin-bottom:6px;}
-    .comp-emoji{font-size:24px;}
-    .comp-info{flex:1;}
-    .comp-name{font-size:13px;font-weight:700;}
-    .comp-meta{font-size:11px;color:var(--text2);}
-    .comp-price{font-size:13px;font-weight:800;color:var(--success);}
-    .del-btn{background:none;border:none;font-size:14px;cursor:pointer;padding:3px 5px;border-radius:5px;opacity:.5;}
-
-    /* MANAGE */
-    .task-manage-item,.child-manage-item{display:flex;align-items:center;gap:10px;background:var(--white);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);margin-bottom:6px;}
-    .task-m-emoji{font-size:30px;}
-    .task-m-info{flex:1;}
-    .task-m-name{font-size:14px;font-weight:700;}
-    .task-m-price{font-size:12px;color:var(--success);font-weight:700;margin-top:1px;}
-    .icon-btn{background:var(--bg2);border:none;width:32px;height:32px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-
-    /* CHILD HOME - compact */
+    /* ═══════════════════════════════════
+       CHILD HOME
+    ═══════════════════════════════════ */
     #screen-child-home{overflow-y:auto;}
     .child-hero{padding:10px 14px 30px;padding-top:calc(10px + env(safe-area-inset-top));background:linear-gradient(145deg,#7C5CBF,#5E3FA3,#4A2E8A);color:white;text-align:center;position:relative;overflow:hidden;}
     .child-hero::before{content:'✨';position:absolute;font-size:120px;opacity:.05;top:-10px;left:-20px;pointer-events:none;}
@@ -194,15 +214,15 @@
     .task-name{font-size:11px;font-weight:700;color:var(--text);line-height:1.3;}
     .task-price-tag{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:white;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:800;}
     .task-count{position:absolute;top:-7px;left:-7px;background:var(--primary);color:white;min-width:22px;height:22px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;border:2px solid var(--bg);padding:0 3px;}
-
-    /* DATE SELECTOR */
     .date-selector{display:flex;align-items:center;gap:8px;background:var(--white);border-radius:var(--radius-sm);padding:8px 12px;border:1.5px solid var(--border);margin-bottom:10px;}
     .date-selector label{font-size:12px;font-weight:800;color:var(--text2);white-space:nowrap;}
     .date-selector input[type=date]{flex:1;border:none;background:none;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;color:var(--text);direction:ltr;text-align:left;-webkit-appearance:none;cursor:pointer;}
     .date-selector input[type=date]:focus{outline:none;}
     .date-today-btn{background:var(--primary-light);border:none;padding:4px 9px;border-radius:999px;font-size:10px;font-weight:800;color:var(--primary-dark);cursor:pointer;white-space:nowrap;font-family:'Heebo',sans-serif;}
 
-    /* CHART */
+    /* ═══════════════════════════════════
+       CHART
+    ═══════════════════════════════════ */
     .chart-section{margin-top:14px;}
     .chart-title{font-size:13px;font-weight:800;margin-bottom:8px;}
     .chart-wrap{background:var(--white);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);}
@@ -218,7 +238,9 @@
     .chart-stat-n{font-size:16px;font-weight:900;}
     .chart-stat-l{font-size:10px;color:var(--text2);font-weight:700;}
 
-    /* REPORT */
+    /* ═══════════════════════════════════
+       REPORT
+    ═══════════════════════════════════ */
     .report-table{width:100%;border-collapse:collapse;font-size:13px;}
     .report-table th{background:var(--bg2);padding:8px 10px;text-align:right;font-weight:800;font-size:11px;color:var(--text2);}
     .report-table td{padding:8px 10px;border-bottom:1px solid var(--border);}
@@ -226,7 +248,17 @@
     .report-total-bar{display:flex;justify-content:space-between;align-items:center;padding:12px;background:linear-gradient(135deg,#11998e,#38ef7d);color:white;border-radius:var(--radius-sm);margin-top:10px;}
     .child-total-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg2);border-radius:var(--radius-xs);margin-bottom:5px;}
 
-    /* MODALS */
+    /* ═══════════════════════════════════
+       JOIN CODE DISPLAY (in settings)
+    ═══════════════════════════════════ */
+    .join-code-display{background:linear-gradient(135deg,#f3f0ff,#e4deff);border:2px dashed var(--purple);border-radius:var(--radius);padding:16px;text-align:center;margin-bottom:12px;}
+    .join-code-label{font-size:12px;font-weight:800;color:var(--purple);margin-bottom:8px;}
+    .join-code-value{font-size:22px;font-weight:900;color:var(--purple-dark);letter-spacing:3px;font-family:monospace;margin-bottom:10px;}
+    .join-code-note{font-size:11px;color:var(--text2);line-height:1.5;}
+
+    /* ═══════════════════════════════════
+       MODALS
+    ═══════════════════════════════════ */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px);}
     .modal-overlay.active{display:flex;}
     .modal{background:var(--white);border-radius:var(--radius) var(--radius) 0 0;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom));width:100%;max-width:430px;max-height:88vh;overflow-y:auto;animation:slideUp .3s ease;}
@@ -241,17 +273,15 @@
     .emoji-opt{width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:22px;border-radius:var(--radius-sm);cursor:pointer;border:2px solid transparent;}
     .emoji-opt:hover,.emoji-opt.sel{border-color:var(--primary);background:var(--bg2);}
 
-    /* TOAST */
+    /* ═══════════════════════════════════
+       MISC
+    ═══════════════════════════════════ */
     .toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:white;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:3000;transition:transform .3s;white-space:nowrap;max-width:calc(100vw - 32px);text-align:center;}
     .toast.show{transform:translateX(-50%) translateY(0);}
     .toast.ok{background:#1b5e20;}
     .toast.err{background:var(--danger);}
-
-    /* CONFETTI */
     .confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;}
     .cf{position:absolute;animation:cfFall linear forwards;}
-
-    /* MISC */
     .empty{text-align:center;padding:36px 16px;color:var(--text2);}
     .empty-icon{font-size:46px;margin-bottom:10px;}
     .empty-title{font-size:15px;font-weight:700;color:var(--text);}
@@ -263,13 +293,12 @@
     .setting-card{background:var(--white);border-radius:var(--radius);padding:14px;border:1px solid var(--border);margin-bottom:12px;}
     .setting-card h3{font-size:14px;font-weight:800;margin-bottom:10px;}
     .pin-opt-note{font-size:11px;color:var(--text2);margin-top:3px;}
-
     @media print{.no-print{display:none!important;}.screen{display:block!important;min-height:auto;}body{background:white;}}
   </style>
 </head>
 <body>
 
-<div class="ver" id="ver-badge">v1.6</div>
+<div class="ver" id="ver-badge">v2.0</div>
 
 <!-- LOADING -->
 <div id="screen-loading" class="screen active">
@@ -279,19 +308,48 @@
   <div class="spinner"></div>
 </div>
 
-<!-- SETUP -->
-<div id="screen-setup" class="screen">
+<!-- ══════════════════════════════════════════
+     WELCOME  – first launch, choose role
+══════════════════════════════════════════ -->
+<div id="screen-welcome" class="screen">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;">
+    <div class="welcome-logo">⭐</div>
+    <div class="welcome-title">משימות ילדים</div>
+    <div class="welcome-sub">אתה הורה או ילד/ה?</div>
+    <button class="welcome-btn welcome-btn-parent" onclick="startParent()">
+      <span class="welcome-btn-icon">👨‍👩‍👧</span>
+      <div>
+        <div class="welcome-btn-title">אני הורה</div>
+        <div class="welcome-btn-sub">הגדרה ראשונית + ניהול</div>
+      </div>
+      <span class="welcome-btn-arrow">←</span>
+    </button>
+    <button class="welcome-btn welcome-btn-child" onclick="startChild()">
+      <span class="welcome-btn-icon">👧</span>
+      <div>
+        <div class="welcome-btn-title">אני ילד/ה</div>
+        <div class="welcome-btn-sub">מתחבר לאפליקציה של ההורה</div>
+      </div>
+      <span class="welcome-btn-arrow">←</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PARENT SETUP  – first time parent config
+══════════════════════════════════════════ -->
+<div id="screen-parent-setup" class="screen">
   <div class="setup-hero">
-    <div style="font-size:44px;margin-bottom:10px;">🚀</div>
-    <h1>ברוכים הבאים!</h1>
-    <p>הגדרה חד-פעמית לחיבור Firebase<br>לסנכרון נתונים בין כל המכשירים</p>
+    <div style="font-size:44px;margin-bottom:8px;">🔧</div>
+    <h1>הגדרת אפליקציית הורה</h1>
+    <p>הגדרה חד-פעמית. לאחר מכן ילדים מצטרפים<br>דרך קוד חיבור שתייצר כאן.</p>
   </div>
   <div class="setup-body">
     <div class="step-row">
       <div class="step-num">1</div>
       <div>
-        <div class="step-title">צרו פרויקט Firebase חינמי</div>
-        <div class="step-desc">גשו ל-<strong>console.firebase.google.com</strong> ← צרו פרויקט ← Web App ← Firestore Database (Spark)</div>
+        <div class="step-title">Firebase חינמי</div>
+        <div class="step-desc">גשו ל-<strong>console.firebase.google.com</strong> ← צרו פרויקט ← Web App ← Firestore (Spark)</div>
       </div>
     </div>
     <div class="step-row">
@@ -318,76 +376,46 @@
     <div class="step-row">
       <div class="step-num">4</div>
       <div style="flex:1;">
-        <div class="step-title">PIN הורה</div>
+        <div class="step-title">PIN הורה (4 ספרות)</div>
         <div class="form-group" style="margin-top:8px;">
-          <input type="number" class="form-input" id="s-pin" placeholder="1234 (4 ספרות)" maxlength="4">
+          <input type="number" class="form-input" id="s-pin" placeholder="1234" maxlength="4">
         </div>
       </div>
     </div>
     <div class="step-row">
       <div class="step-num">5</div>
       <div style="flex:1;">
-        <div class="step-title">ילדים</div>
+        <div class="step-title">הוסף ילדים (ניתן גם מאוחר יותר)</div>
         <div id="setup-children" style="margin-top:8px;"></div>
-        <button onclick="addSetupChild()" class="btn btn-ghost" style="margin-top:4px;font-size:13px;padding:8px 14px;width:auto;">+ הוסף ילד/ה</button>
+        <button onclick="addSetupChild()" class="btn btn-ghost btn-sm" style="margin-top:4px;width:auto;">+ הוסף ילד/ה</button>
       </div>
     </div>
-    <button class="btn btn-primary" onclick="saveSetup()" style="font-size:15px;">🚀 שמור והתחל!</button>
+    <button class="btn btn-primary" onclick="saveParentSetup()" style="font-size:15px;">🚀 שמור והתחל!</button>
     <div style="height:16px;"></div>
   </div>
 </div>
 
-<!-- LOGIN - two big entry buttons -->
-<div id="screen-login" class="screen">
-  <div class="login-top">
-    <div class="login-logo">⭐</div>
-    <div class="login-title">משימות ילדים</div>
-    <div class="login-date-badge">📅 <span id="login-date-lbl"></span></div>
-  </div>
-  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:16px 20px;gap:14px;">
-    <!-- Big child entry button -->
-    <button class="big-entry-btn child-entry-btn" onclick="showScreen('screen-child-select')">
-      <span class="big-entry-icon">👧</span>
-      <div class="big-entry-text">
-        <div class="big-entry-title">כניסת ילדים</div>
-        <div class="big-entry-sub">בחר את הפרופיל שלך</div>
-      </div>
-      <span class="big-entry-arrow">←</span>
-    </button>
-    <!-- Big parent entry button -->
-    <button class="big-entry-btn parent-entry-btn" onclick="showScreen('screen-parent-pin')">
-      <span class="big-entry-icon">🔐</span>
-      <div class="big-entry-text">
-        <div class="big-entry-title">כניסת הורה</div>
-        <div class="big-entry-sub">ניהול משימות ודוחות</div>
-      </div>
-      <span class="big-entry-arrow">←</span>
-    </button>
+<!-- ══════════════════════════════════════════
+     CHILD JOIN  – child device: enter code
+══════════════════════════════════════════ -->
+<div id="screen-child-join" class="screen">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+    <div class="child-join-icon">👧</div>
+    <div class="child-join-title">כניסת ילד/ה</div>
+    <div class="child-join-sub">בקש מההורה את קוד החיבור<br>תמצא אותו בהגדרות אפליקציית ההורה</div>
+    <input class="join-code-input" id="join-code-field" type="text" maxlength="12"
+      placeholder="הזן קוד חיבור" autocomplete="off" autocorrect="off" spellcheck="false">
+    <button class="btn btn-purple" onclick="submitJoinCode()">🔗 התחבר</button>
+    <button class="join-back-btn" onclick="showScreen('screen-welcome')">← חזור</button>
   </div>
 </div>
 
-<!-- CHILD SELECT - pick which child -->
-<div id="screen-child-select" class="screen">
-  <div class="app-header">
-    <button class="header-back" onclick="showScreen('screen-login')">→</button>
-    <span class="header-title">👧 בחר פרופיל</span>
-    <span style="width:34px;"></span>
-  </div>
-  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:20px;">
-    <div style="font-size:13px;font-weight:800;color:var(--text2);text-align:center;margin-bottom:16px;">מי אתה?</div>
-    <div class="children-grid" id="children-grid"></div>
-    <div id="no-children-msg" style="display:none;text-align:center;padding:30px 0;">
-      <div style="font-size:46px;margin-bottom:10px;">😕</div>
-      <div style="font-size:15px;font-weight:700;color:var(--text2);">אין ילדים מוגדרים עדיין</div>
-      <div style="font-size:12px;color:var(--text2);margin-top:6px;">בקש מההורה להוסיף אותך</div>
-    </div>
-  </div>
-</div>
-
-<!-- PARENT PIN -->
+<!-- ══════════════════════════════════════════
+     PARENT PIN
+══════════════════════════════════════════ -->
 <div id="screen-parent-pin" class="screen">
   <div class="app-header">
-    <button class="header-back" onclick="showScreen('screen-login')">→</button>
+    <button class="header-back" onclick="logout()">→</button>
     <span class="header-title">כניסת הורה</span>
     <span style="width:34px;"></span>
   </div>
@@ -417,10 +445,12 @@
   </div>
 </div>
 
-<!-- CHILD PIN -->
+<!-- ══════════════════════════════════════════
+     CHILD PIN  (optional per child)
+══════════════════════════════════════════ -->
 <div id="screen-child-pin" class="screen">
   <div class="app-header">
-    <button class="header-back" onclick="showScreen('screen-login')">→</button>
+    <button class="header-back" id="child-pin-back-btn">→</button>
     <span class="header-title" id="child-pin-hdr">כניסה</span>
     <span style="width:34px;"></span>
   </div>
@@ -450,7 +480,9 @@
   </div>
 </div>
 
-<!-- PARENT HOME -->
+<!-- ══════════════════════════════════════════
+     PARENT HOME
+══════════════════════════════════════════ -->
 <div id="screen-parent-home" class="screen">
   <div class="parent-hero">
     <div class="parent-hero-top">
@@ -527,9 +559,7 @@
   <div style="padding:12px 12px 0;" class="no-print">
     <div class="form-group">
       <label class="form-label">ילד/ה</label>
-      <select class="form-input" id="report-child-sel" onchange="generateReport()">
-        <option value="all">כל הילדים</option>
-      </select>
+      <select class="form-input" id="report-child-sel" onchange="generateReport()"><option value="all">כל הילדים</option></select>
     </div>
   </div>
   <div class="month-nav no-print">
@@ -547,22 +577,53 @@
     <span class="header-title">⚙️ הגדרות</span>
   </div>
   <div class="page-content">
+    <!-- JOIN CODE for children -->
+    <div class="setting-card">
+      <h3>🔗 קוד חיבור לילדים</h3>
+      <div class="join-code-display">
+        <div class="join-code-label">תן לילד/ה להזין קוד זה באפליקציה שלהם</div>
+        <div class="join-code-value" id="join-code-display">------</div>
+        <div class="join-code-note">כניסה ל-"ילד/ה" ← "כניסת ילד/ה" ← הזן קוד זה</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="width:auto;" onclick="copyJoinCode()">📋 העתק קוד</button>
+    </div>
     <div class="setting-card">
       <h3>🔐 שינוי PIN הורה</h3>
       <div class="form-group">
         <label class="form-label">קוד PIN חדש (4 ספרות)</label>
         <input type="number" class="form-input" id="new-pin" placeholder="קוד חדש">
       </div>
-      <button class="btn btn-primary" onclick="updatePin()">שמור</button>
+      <button class="btn btn-primary btn-sm" onclick="updatePin()">שמור</button>
     </div>
     <div class="setting-card">
       <h3>ℹ️ מידע</h3>
-      <p style="font-size:12px;color:var(--text2);line-height:1.7;">Family ID:<br><span id="fam-id-disp" style="font-family:monospace;font-size:10px;word-break:break-all;"></span></p>
+      <p style="font-size:12px;color:var(--text2);line-height:1.7;">גרסה: <strong id="ver-settings"></strong><br>Family ID: <span id="fam-id-disp" style="font-family:monospace;font-size:10px;word-break:break-all;"></span></p>
     </div>
     <div class="setting-card">
       <h3>🗑️ איפוס</h3>
-      <button class="btn btn-ghost" onclick="resetApp()" style="color:var(--danger);">נקה נתונים מקומיים</button>
+      <button class="btn btn-ghost btn-sm" onclick="resetApp()" style="color:var(--danger);width:auto;">נקה נתונים מקומיים</button>
     </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     CHILD SELECT  – on child device, pick profile
+══════════════════════════════════════════ -->
+<div id="screen-child-select" class="screen">
+  <div class="child-select-top">
+    <div class="child-select-logo">⭐</div>
+    <div class="child-select-title">מי אתה היום?</div>
+    <div class="child-select-date">📅 <span id="child-select-date-lbl"></span></div>
+  </div>
+  <div style="height:10px;"></div>
+  <div class="children-grid" id="children-grid"></div>
+  <div id="no-children-msg" style="display:none;text-align:center;padding:30px 20px;">
+    <div style="font-size:46px;margin-bottom:10px;">😕</div>
+    <div style="font-size:15px;font-weight:700;color:var(--text2);">ההורה עוד לא הוסיף ילדים</div>
+    <div style="font-size:12px;color:var(--text2);margin-top:6px;">בקש מההורה להוסיף אותך בהגדרות</div>
+  </div>
+  <div class="child-select-footer">
+    <button onclick="disconnectChild()">התנתק מהמשפחה</button>
   </div>
 </div>
 
@@ -570,7 +631,7 @@
 <div id="screen-child-home" class="screen">
   <div class="child-hero">
     <div class="child-hero-top">
-      <button class="child-hero-btn" onclick="logout()">יציאה</button>
+      <button class="child-hero-btn" onclick="backToChildSelect()">← החלף</button>
       <button class="child-hero-btn" onclick="showScreen('screen-child-history')">📜 היסטוריה</button>
     </div>
     <div class="child-hero-avatar" id="ch-avatar">🦁</div>
@@ -618,7 +679,7 @@
     <div class="modal-handle"></div>
     <div class="modal-title" id="mtask-title">הוסף משימה</div>
     <input type="hidden" id="mtask-id">
-    <div class="form-group"><label class="form-label">שם המשימה</label><input type="text" class="form-input" id="mtask-name" placeholder="לדוגמה: שטיפת כלים"></div>
+    <div class="form-group"><label class="form-label">שם</label><input type="text" class="form-input" id="mtask-name" placeholder="שם המשימה"></div>
     <div class="form-group"><label class="form-label">מחיר (₪)</label><input type="number" class="form-input" id="mtask-price" placeholder="0" min="0" step="0.5"></div>
     <div class="form-group"><label class="form-label">אמוג'י</label><div class="emoji-picker" id="task-emoji-grid"></div></div>
     <button class="btn btn-primary" onclick="saveTask()" style="margin-bottom:7px;">💾 שמור</button>
@@ -635,9 +696,9 @@
     <div class="form-group"><label class="form-label">שם</label><input type="text" class="form-input" id="mchild-name" placeholder="שם הילד/ה"></div>
     <div class="form-group"><label class="form-label">אמוג'י פרופיל</label><div class="emoji-picker" id="child-emoji-grid"></div></div>
     <div class="form-group">
-      <label class="form-label">PIN (4 ספרות)</label>
-      <input type="number" class="form-input" id="mchild-pin" placeholder="השאר ריק = ללא PIN" maxlength="4">
-      <div class="pin-opt-note">💡 ריק = כניסה ישירה</div>
+      <label class="form-label">PIN (4 ספרות – אופציונלי)</label>
+      <input type="number" class="form-input" id="mchild-pin" placeholder="ריק = כניסה ישירה" maxlength="4">
+      <div class="pin-opt-note">💡 ריק = כניסה ישירה ללא קוד</div>
     </div>
     <button class="btn btn-purple" onclick="saveChild()" style="margin-bottom:7px;">💾 שמור</button>
     <button class="btn btn-ghost" onclick="closeModal('modal-child')">ביטול</button>
@@ -651,7 +712,7 @@
     <div class="confirm-body">
       <span class="confirm-big-emoji" id="conf-emoji">👕</span>
       <div class="confirm-task-name" id="conf-name">משימה</div>
-      <div class="confirm-desc" id="conf-date-lbl">ביצעת את המשימה הזו?</div>
+      <div class="confirm-desc" id="conf-date-lbl">ביצעת?</div>
       <div class="confirm-price">+<span id="conf-price">0</span>₪</div>
     </div>
     <button class="btn btn-success" onclick="doCompleteTask()" style="margin-bottom:7px;">✅ כן! ביצעתי</button>
@@ -669,17 +730,11 @@ import {
   collection, addDoc, query, where, getDocs, onSnapshot, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-const VERSION = 'v1.6';
+// ══════════════════════════════════════════
+//  VERSION & CONSTANTS
+// ══════════════════════════════════════════
+const VERSION = 'v2.0';
 document.getElementById('ver-badge').textContent = VERSION;
-
-// ── STATE ──
-let db = null;
-const S = {
-  familyId: null, user: null, pendingChild: null,
-  family: { parentPin: '1234', tasks: [], children: [] },
-  reportMonth: ym(), histMonth: ym(),
-  pendingTask: null, unsub: null
-};
 
 const TASK_EM  = ['👕','🍽️','♻️','🗑️','🛏️','🧹','🧺','🛒','🐕','📚','🌱','🚿','🪴','🧴','🍳','🚗','💊','✉️','📦','🔧','🏠','🌿','⚡','🎨','🎵'];
 const CHILD_EM = ['🦁','🐯','🐻','🐼','🐨','🦊','🐸','🐙','🦋','🦄','🐬','🦅','🌈','⭐','🚀','🎮','🎨','🏆','🌺','🍕','🦸','🐲','🎯','🌙','🎀'];
@@ -691,110 +746,119 @@ const DEFAULT_TASKS = [
   {id:uid(),name:'סידור חדר',price:5,emoji:'🛏️'}
 ];
 
-// ── UTILS ──
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let db = null;
+const S = {
+  role: null,           // 'parent' | 'child'
+  familyId: null,
+  user: null,           // 'parent' | child-object
+  pendingChild: null,
+  family: { parentPin:'1234', tasks:[], children:[] },
+  reportMonth: ym(),
+  histMonth: ym(),
+  pendingTask: null,
+  unsub: null
+};
+
+// ══════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════
 function uid()  { return Math.random().toString(36).slice(2,11); }
 function ym(d)  { const t=d||new Date(); return t.getFullYear()+'-'+pad(t.getMonth()+1); }
 function ymd(d) { const t=d||new Date(); return ym(t)+'-'+pad(t.getDate()); }
 function pad(n) { return String(n).padStart(2,'0'); }
 function fmtMonth(s){ const[y,m]=s.split('-'); return ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'][+m-1]+' '+y; }
-function fmtDate(s) { if(!s) return ''; const[,m,d]=s.split('-'); return d+'/'+m; }
-function fmtTime(ts){ if(!ts) return ''; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'}); }
+function fmtDate(s) { if(!s)return''; const[,m,d]=s.split('-'); return d+'/'+m; }
+function fmtTime(ts){ if(!ts)return''; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'}); }
 function heDayName(d){ return ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'][(d||new Date()).getDay()]; }
 function daysInMonth(s){ const[y,m]=s.split('-').map(Number); return new Date(y,m,0).getDate(); }
+function todayStr(){ const t=new Date(); return 'יום '+heDayName(t)+' '+pad(t.getDate())+'/'+pad(t.getMonth()+1)+'/'+t.getFullYear(); }
 
-// ── DATE PICKERS ──
-function getDate(who){ const el=document.getElementById(who==='parent'?'parent-date-picker':'child-date-picker'); return el?.value||ymd(); }
-window.setTodayDate=function(who){ const id=who==='parent'?'parent-date-picker':'child-date-picker'; const el=document.getElementById(id); if(el){el.value=ymd();if(who==='parent')renderToday();else renderChildHome();} };
-function initPicker(who){ const id=who==='parent'?'parent-date-picker':'child-date-picker'; const el=document.getElementById(id); if(el&&!el.value) el.value=ymd(); }
+// ══════════════════════════════════════════
+//  JOIN CODE  encode/decode
+//  Format: base64url of JSON {a:apiKey, p:projectId, f:familyId}
+//  Displayed as 8-char alphanumeric short code stored in Firebase
+// ══════════════════════════════════════════
+function encodeJoinCode(fbConfig, familyId){
+  const obj = {a: fbConfig.apiKey, p: fbConfig.projectId, f: familyId};
+  return btoa(JSON.stringify(obj)).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+}
+function decodeJoinCode(code){
+  try{
+    const b64 = code.replace(/-/g,'+').replace(/_/g,'/');
+    const padded = b64 + '==='.slice((b64.length+3)%4);
+    return JSON.parse(atob(padded));
+  }catch(e){ return null; }
+}
 
-// ── SCREEN ──
+// ══════════════════════════════════════════
+//  FIREBASE
+// ══════════════════════════════════════════
+async function initFB(config){
+  try{ const app=initializeApp(config); db=getFirestore(app); return true; }
+  catch(e){ console.error(e); return false; }
+}
+function subscribeFamily(){
+  if(S.unsub) S.unsub();
+  S.unsub=onSnapshot(doc(db,'families',S.familyId),snap=>{
+    if(!snap.exists()) return;
+    S.family=snap.data();
+    // refresh child grid whenever data changes
+    if(document.getElementById('screen-child-select').classList.contains('active')) renderChildGrid();
+    const act=document.querySelector('.screen.active');
+    if(!act) return;
+    if(act.id==='screen-parent-tasks')    renderTasks();
+    if(act.id==='screen-parent-children') renderChildren();
+    if(act.id==='screen-parent-home')     renderParentHome();
+  });
+}
+async function getCompletions(filters){
+  if(!db||!S.familyId) return [];
+  try{
+    const q=query(collection(db,'completions'),where('familyId','==',S.familyId));
+    const snap=await getDocs(q);
+    let docs=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(filters.date)   docs=docs.filter(d=>d.date===filters.date);
+    if(filters.month)  docs=docs.filter(d=>d.month===filters.month);
+    if(filters.childId&&filters.childId!=='all') docs=docs.filter(d=>d.childId===filters.childId);
+    docs.sort((a,b)=>(a.timestamp?.seconds||0)-(b.timestamp?.seconds||0));
+    return docs;
+  }catch(e){ console.error(e); return []; }
+}
+
+// ══════════════════════════════════════════
+//  SCREEN NAVIGATION
+// ══════════════════════════════════════════
 window.showScreen=function(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById(id); if(el) el.classList.add('active');
-  // Always render login when showing it
-  if(id==='screen-login')           { renderLoginDate(); }
-  if(id==='screen-child-select')    { renderChildButtons(); }
   if(id==='screen-parent-home')     renderParentHome();
   if(id==='screen-parent-tasks')    renderTasks();
   if(id==='screen-parent-children') renderChildren();
   if(id==='screen-parent-report')   initReport();
   if(id==='screen-parent-today')    { initPicker('parent'); renderToday(); }
-  if(id==='screen-parent-settings') document.getElementById('fam-id-disp').textContent=S.familyId||'';
+  if(id==='screen-parent-settings') renderSettings();
+  if(id==='screen-child-select')    { renderChildSelectDate(); renderChildGrid(); }
   if(id==='screen-child-home')      { initPicker('child'); renderChildHome(); }
   if(id==='screen-child-history')   initHistory();
 };
 
-// ── LOGIN: split into two functions for clarity ──
-
-/** Update date badge only */
-function renderLoginDate(){
-  const t=new Date();
-  document.getElementById('login-date-lbl').textContent=
-    'יום '+heDayName(t)+' '+pad(t.getDate())+'/'+pad(t.getMonth()+1)+'/'+t.getFullYear();
-}
-
-/**
- * Render child buttons on the child-select screen.
- * Called whenever family data updates or child-select screen is shown.
- */
-function renderChildButtons(){
-  const children=(S.family&&S.family.children)||[];
-  const grid=document.getElementById('children-grid');
-  const noMsg=document.getElementById('no-children-msg');
-  if(!grid) return;
-  grid.innerHTML='';
-  if(children.length>0){
-    if(noMsg) noMsg.style.display='none';
-    children.forEach(c=>{
-      const btn=document.createElement('button');
-      btn.className='child-profile-btn';
-      const hasPin=c.pin&&c.pin.length===4;
-      btn.innerHTML=`<div class="child-avatar">${c.avatar}</div>
-        <div class="child-name-text">${c.name}</div>
-        ${hasPin?'<div style="font-size:9px;color:var(--text2);background:var(--bg2);padding:1px 7px;border-radius:999px;">🔒 PIN</div>':''}`;
-      btn.onclick=()=>loginChild(c);
-      grid.appendChild(btn);
-    });
-  } else {
-    if(noMsg) noMsg.style.display='block';
-  }
-}
-
-function showLoginScreen(){ renderLoginDate(); showScreen('screen-login'); }
-
-function loginChild(c){
-  if(c.pin&&c.pin.length===4){
-    S.pendingChild=c;
-    childPinVal=''; updateDots('child');
-    document.getElementById('child-pin-av').textContent=c.avatar;
-    document.getElementById('child-pin-nm').textContent=c.name;
-    document.getElementById('child-pin-hdr').textContent='כניסה – '+c.name;
-    document.getElementById('child-pin-error').textContent='';
-    // back from child-pin goes to child-select
-    document.getElementById('screen-child-pin').querySelector('.header-back').onclick=()=>showScreen('screen-child-select');
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-    document.getElementById('screen-child-pin').classList.add('active');
-  } else {
-    S.user=c; initPicker('child'); showScreen('screen-child-home');
-  }
-}
-
-// ── TOAST ──
+// ══════════════════════════════════════════
+//  TOAST / MODAL / CONFETTI
+// ══════════════════════════════════════════
 window.showToast=function(msg,type=''){
   const t=document.getElementById('toast');
   t.textContent=msg; t.className='toast '+type+' show';
   setTimeout(()=>t.className='toast '+type,2800);
 };
-
-// ── MODAL ──
 window.closeModal=function(id){ document.getElementById(id).classList.remove('active'); };
 function openModal(id){ document.getElementById(id).classList.add('active'); }
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('active'); }));
-
-// ── CONFETTI ──
 function confetti(){
   const c=document.getElementById('confetti'); c.innerHTML='';
-  const cols=['#FF8C42','#FFB703','#3BB273','#E63946','#7C5CBF','#667eea'];
+  const cols=['#FF8C42','#FFB703','#3BB273','#E63946','#7C5CBF'];
   for(let i=0;i<60;i++){
     const p=document.createElement('div'); p.className='cf';
     const sz=5+Math.random()*8;
@@ -804,7 +868,15 @@ function confetti(){
   setTimeout(()=>c.innerHTML='',2000);
 }
 
-// ── SETUP ──
+// ══════════════════════════════════════════
+//  WELCOME  – role selection
+// ══════════════════════════════════════════
+window.startParent = function(){ showScreen('screen-parent-setup'); };
+window.startChild  = function(){ showScreen('screen-child-join'); };
+
+// ══════════════════════════════════════════
+//  PARENT SETUP
+// ══════════════════════════════════════════
 let setupKids=[];
 function initSetupKids(){
   setupKids=[{name:'',emoji:'🦁',pin:''},{name:'',emoji:'🐯',pin:''}];
@@ -829,6 +901,169 @@ function renderSetupKids(){
 window.addSetupChild=function(){ setupKids.push({name:'',emoji:'🐻',pin:''}); renderSetupKids(); };
 window.pickKidEmoji=function(i){ showEmojiPicker(CHILD_EM,em=>{ setupKids[i].emoji=em; renderSetupKids(); }); };
 
+window.saveParentSetup=async function(){
+  const apiKey=document.getElementById('s-apiKey').value.trim();
+  const projectId=document.getElementById('s-projectId').value.trim();
+  const pin=document.getElementById('s-pin').value.trim()||'1234';
+  if(!apiKey||!projectId){ showToast('נא למלא API Key ו-Project ID','err'); return; }
+  const ok=await initFB({apiKey,authDomain:projectId+'.firebaseapp.com',projectId});
+  if(!ok){ showToast('שגיאה בחיבור ל-Firebase','err'); return; }
+  const children=setupKids.filter(c=>c.name.trim()).map(c=>({
+    id:uid(), name:c.name.trim(), avatar:c.emoji,
+    pin:c.pin.trim().length===4?c.pin.trim():''
+  }));
+  const familyId=uid()+uid();
+  const fbConfig={apiKey, authDomain:projectId+'.firebaseapp.com', projectId};
+  // Save to localStorage as PARENT
+  localStorage.setItem('role','parent');
+  localStorage.setItem('fbConfig',JSON.stringify(fbConfig));
+  localStorage.setItem('familyId',familyId);
+  S.role='parent'; S.familyId=familyId;
+  const data={parentPin:pin, tasks:DEFAULT_TASKS, children, createdAt:new Date().toISOString()};
+  try{
+    await setDoc(doc(db,'families',familyId),data);
+    S.family=data; subscribeFamily();
+    showToast('הוגדר בהצלחה! 🎉','ok');
+    // Go to parent PIN to authenticate
+    showScreen('screen-parent-pin');
+  }catch(e){ showToast('שגיאה: '+e.message,'err'); }
+};
+
+// ══════════════════════════════════════════
+//  CHILD JOIN  – enter join code
+// ══════════════════════════════════════════
+window.submitJoinCode=async function(){
+  const raw=document.getElementById('join-code-field').value.trim();
+  if(!raw){ showToast('נא להזין קוד','err'); return; }
+  const decoded=decodeJoinCode(raw);
+  if(!decoded||!decoded.a||!decoded.p||!decoded.f){ showToast('קוד לא תקין','err'); return; }
+  const fbConfig={apiKey:decoded.a, authDomain:decoded.p+'.firebaseapp.com', projectId:decoded.p};
+  const ok=await initFB(fbConfig);
+  if(!ok){ showToast('שגיאה בחיבור ל-Firebase','err'); return; }
+  try{
+    const snap=await getDoc(doc(db,'families',decoded.f));
+    if(!snap.exists()){ showToast('קוד לא נמצא. בדוק עם ההורה','err'); return; }
+    // Save as CHILD
+    localStorage.setItem('role','child');
+    localStorage.setItem('fbConfig',JSON.stringify(fbConfig));
+    localStorage.setItem('familyId',decoded.f);
+    S.role='child'; S.familyId=decoded.f; S.family=snap.data();
+    subscribeFamily();
+    showToast('התחברת בהצלחה! 🎉','ok');
+    showScreen('screen-child-select');
+  }catch(e){ showToast('שגיאה: '+e.message,'err'); }
+};
+
+// ══════════════════════════════════════════
+//  CHILD SELECT SCREEN
+// ══════════════════════════════════════════
+function renderChildSelectDate(){
+  document.getElementById('child-select-date-lbl').textContent=todayStr();
+}
+function renderChildGrid(){
+  const children=(S.family&&S.family.children)||[];
+  const grid=document.getElementById('children-grid');
+  const noMsg=document.getElementById('no-children-msg');
+  if(!grid) return;
+  grid.innerHTML='';
+  if(children.length>0){
+    if(noMsg) noMsg.style.display='none';
+    children.forEach(c=>{
+      const btn=document.createElement('button');
+      btn.className='child-profile-btn';
+      const hasPin=c.pin&&c.pin.length===4;
+      btn.innerHTML=`<div class="child-avatar">${c.avatar}</div>
+        <div class="child-name-text">${c.name}</div>
+        ${hasPin?'<div style="font-size:9px;color:var(--text2);background:rgba(0,0,0,.06);padding:1px 7px;border-radius:999px;margin-top:2px;">🔒 PIN</div>':''}`;
+      btn.onclick=()=>loginChild(c);
+      grid.appendChild(btn);
+    });
+  } else {
+    if(noMsg) noMsg.style.display='block';
+  }
+}
+function loginChild(c){
+  if(c.pin&&c.pin.length===4){
+    S.pendingChild=c;
+    childPinVal=''; updateDots('child');
+    document.getElementById('child-pin-av').textContent=c.avatar;
+    document.getElementById('child-pin-nm').textContent=c.name;
+    document.getElementById('child-pin-hdr').textContent='כניסה – '+c.name;
+    document.getElementById('child-pin-error').textContent='';
+    document.getElementById('child-pin-back-btn').onclick=()=>showScreen('screen-child-select');
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById('screen-child-pin').classList.add('active');
+  } else {
+    S.user=c; initPicker('child'); showScreen('screen-child-home');
+  }
+}
+window.backToChildSelect=function(){ S.user=null; showScreen('screen-child-select'); };
+window.disconnectChild=function(){
+  if(confirm('להתנתק מהמשפחה? תצטרך להזין קוד חיבור מחדש.')){ localStorage.clear(); location.reload(); }
+};
+
+// ══════════════════════════════════════════
+//  LOGOUT
+// ══════════════════════════════════════════
+window.logout=function(){
+  S.user=null; S.pendingChild=null;
+  parentPinVal=''; childPinVal='';
+  updateDots('parent'); updateDots('child');
+  if(S.role==='child') showScreen('screen-child-select');
+  else showScreen('screen-parent-pin');
+};
+window.resetApp=function(){ if(confirm('לאפס לגמרי?')){ localStorage.clear(); location.reload(); } };
+
+// ══════════════════════════════════════════
+//  PIN
+// ══════════════════════════════════════════
+let parentPinVal='', childPinVal='';
+window.pinPress=function(who,d){
+  if(who==='parent'){if(parentPinVal.length>=4)return;parentPinVal+=d;updateDots('parent');if(parentPinVal.length===4)setTimeout(()=>checkPin('parent'),150);}
+  else{if(childPinVal.length>=4)return;childPinVal+=d;updateDots('child');if(childPinVal.length===4)setTimeout(()=>checkPin('child'),150);}
+};
+window.pinDelete=function(who){
+  if(who==='parent'){parentPinVal=parentPinVal.slice(0,-1);updateDots('parent');document.getElementById('parent-pin-error').textContent='';}
+  else{childPinVal=childPinVal.slice(0,-1);updateDots('child');document.getElementById('child-pin-error').textContent='';}
+};
+function updateDots(who){
+  const val=who==='parent'?parentPinVal:childPinVal;
+  document.querySelectorAll(`#${who}-pin-dots .pin-dot`).forEach((d,i)=>d.classList.toggle('filled',i<val.length));
+}
+function checkPin(who){
+  if(who==='parent'){
+    if(parentPinVal===String(S.family.parentPin)){
+      S.user='parent'; parentPinVal=''; updateDots('parent');
+      document.getElementById('parent-pin-error').textContent='';
+      showScreen('screen-parent-home');
+    }else{
+      document.getElementById('parent-pin-error').textContent='❌ קוד שגוי';
+      parentPinVal=''; updateDots('parent'); shake('parent-pin-dots');
+    }
+  }else{
+    const c=S.pendingChild;
+    if(c&&childPinVal===String(c.pin)){
+      S.user=c; childPinVal=''; updateDots('child');
+      document.getElementById('child-pin-error').textContent='';
+      S.pendingChild=null; initPicker('child'); showScreen('screen-child-home');
+    }else{
+      document.getElementById('child-pin-error').textContent='❌ קוד שגוי';
+      childPinVal=''; updateDots('child'); shake('child-pin-dots');
+    }
+  }
+}
+function shake(id){ const el=document.getElementById(id); el.style.animation='shake .4s'; setTimeout(()=>el.style.animation='',400); }
+
+// ══════════════════════════════════════════
+//  DATE PICKERS
+// ══════════════════════════════════════════
+function getDate(who){ const el=document.getElementById(who==='parent'?'parent-date-picker':'child-date-picker'); return el?.value||ymd(); }
+window.setTodayDate=function(who){ const id=who==='parent'?'parent-date-picker':'child-date-picker'; const el=document.getElementById(id); if(el){el.value=ymd();if(who==='parent')renderToday();else renderChildHome();} };
+function initPicker(who){ const id=who==='parent'?'parent-date-picker':'child-date-picker'; const el=document.getElementById(id); if(el&&!el.value) el.value=ymd(); }
+
+// ══════════════════════════════════════════
+//  EMOJI UTILS
+// ══════════════════════════════════════════
 function showEmojiPicker(emojis,cb){
   const ov=document.createElement('div');
   ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:5000;display:flex;align-items:flex-end;justify-content:center;';
@@ -846,103 +1081,26 @@ function showEmojiPicker(emojis,cb){
   ov.onclick=e=>{ if(e.target===ov) document.body.removeChild(ov); };
   document.body.appendChild(ov);
 }
-
-window.saveSetup=async function(){
-  const apiKey=document.getElementById('s-apiKey').value.trim();
-  const projectId=document.getElementById('s-projectId').value.trim();
-  const pin=document.getElementById('s-pin').value.trim()||'1234';
-  if(!apiKey||!projectId){ showToast('נא למלא API Key ו-Project ID','err'); return; }
-  const ok=await initFB({apiKey,authDomain:projectId+'.firebaseapp.com',projectId});
-  if(!ok){ showToast('שגיאה בחיבור ל-Firebase','err'); return; }
-  const children=setupKids.filter(c=>c.name.trim()).map(c=>({
-    id:uid(),name:c.name.trim(),avatar:c.emoji,
-    pin:c.pin.trim().length===4?c.pin.trim():''
-  }));
-  const familyId=uid()+uid();
-  localStorage.setItem('fbConfig',JSON.stringify({apiKey,authDomain:projectId+'.firebaseapp.com',projectId}));
-  localStorage.setItem('familyId',familyId);
-  S.familyId=familyId;
-  const data={parentPin:pin,tasks:DEFAULT_TASKS,children,createdAt:new Date().toISOString()};
-  try{
-    await setDoc(doc(db,'families',familyId),data);
-    S.family=data; subscribeFamily();
-    showToast('הוגדר בהצלחה! 🎉','ok');
-    showLoginScreen();
-  }catch(e){ showToast('שגיאה: '+e.message,'err'); }
-};
-
-// ── FIREBASE ──
-async function initFB(config){
-  try{ const app=initializeApp(config); db=getFirestore(app); return true; }
-  catch(e){ console.error(e); return false; }
-}
-
-function subscribeFamily(){
-  if(S.unsub) S.unsub();
-  S.unsub=onSnapshot(doc(db,'families',S.familyId),snap=>{
-    if(!snap.exists()) return;
-    S.family=snap.data();
-    renderChildButtons(); // always refresh child grid
-    const act=document.querySelector('.screen.active');
-    if(!act) return;
-    if(act.id==='screen-parent-tasks')    renderTasks();
-    if(act.id==='screen-parent-children') renderChildren();
-    if(act.id==='screen-parent-home')     renderParentHome();
+function buildEmojiGrid(gid,emojis,sel){
+  const g=document.getElementById(gid); g.innerHTML='';
+  emojis.forEach(em=>{
+    const s=document.createElement('span'); s.className='emoji-opt'+(em===sel?' sel':''); s.textContent=em;
+    s.onclick=()=>{g.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('sel'));s.classList.add('sel');};
+    g.appendChild(s);
   });
 }
 
-async function getCompletions(filters){
-  if(!db||!S.familyId) return [];
-  try{
-    const q=query(collection(db,'completions'),where('familyId','==',S.familyId));
-    const snap=await getDocs(q);
-    let docs=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(filters.date)    docs=docs.filter(d=>d.date===filters.date);
-    if(filters.month)   docs=docs.filter(d=>d.month===filters.month);
-    if(filters.childId&&filters.childId!=='all') docs=docs.filter(d=>d.childId===filters.childId);
-    docs.sort((a,b)=>(a.timestamp?.seconds||0)-(b.timestamp?.seconds||0));
-    return docs;
-  }catch(e){ console.error(e); return []; }
-}
-
-// ── PIN ──
-let parentPinVal='', childPinVal='';
-window.pinPress=function(who,d){
-  if(who==='parent'){if(parentPinVal.length>=4)return;parentPinVal+=d;updateDots('parent');if(parentPinVal.length===4)setTimeout(()=>checkPin('parent'),150);}
-  else{if(childPinVal.length>=4)return;childPinVal+=d;updateDots('child');if(childPinVal.length===4)setTimeout(()=>checkPin('child'),150);}
-};
-window.pinDelete=function(who){
-  if(who==='parent'){parentPinVal=parentPinVal.slice(0,-1);updateDots('parent');document.getElementById('parent-pin-error').textContent='';}
-  else{childPinVal=childPinVal.slice(0,-1);updateDots('child');document.getElementById('child-pin-error').textContent='';}
-};
-function updateDots(who){
-  const val=who==='parent'?parentPinVal:childPinVal;
-  document.querySelectorAll(`#${who}-pin-dots .pin-dot`).forEach((d,i)=>d.classList.toggle('filled',i<val.length));
-}
-function checkPin(who){
-  if(who==='parent'){
-    if(parentPinVal===String(S.family.parentPin)){S.user='parent';parentPinVal='';updateDots('parent');document.getElementById('parent-pin-error').textContent='';showScreen('screen-parent-home');}
-    else{document.getElementById('parent-pin-error').textContent='❌ קוד שגוי';parentPinVal='';updateDots('parent');shake('parent-pin-dots');}
-  }else{
-    const c=S.pendingChild;
-    if(c&&childPinVal===String(c.pin)){S.user=c;childPinVal='';updateDots('child');document.getElementById('child-pin-error').textContent='';S.pendingChild=null;initPicker('child');showScreen('screen-child-home');}
-    else{document.getElementById('child-pin-error').textContent='❌ קוד שגוי';childPinVal='';updateDots('child');shake('child-pin-dots');}
-  }
-}
-function shake(id){const el=document.getElementById(id);el.style.animation='shake .4s';setTimeout(()=>el.style.animation='',400);}
-window.logout=function(){S.user=null;S.pendingChild=null;parentPinVal='';childPinVal='';updateDots('parent');updateDots('child');showLoginScreen();};
-window.resetApp=function(){if(confirm('לנקות?')){localStorage.clear();location.reload();}};
-
-// ── PARENT HOME ──
+// ══════════════════════════════════════════
+//  PARENT HOME
+// ══════════════════════════════════════════
 async function renderParentHome(){
   const d=new Date();
   document.getElementById('parent-date-h').textContent='יום '+heDayName(d)+', '+pad(d.getDate())+'/'+pad(d.getMonth()+1);
   document.getElementById('s-kids').textContent=S.family.children.length;
-  const [todayC,monthC]=await Promise.all([getCompletions({date:ymd()}),getCompletions({month:ym()})]);
+  const[todayC,monthC]=await Promise.all([getCompletions({date:ymd()}),getCompletions({month:ym()})]);
   document.getElementById('s-today').textContent=todayC.length;
   const grand=monthC.reduce((s,c)=>s+c.price,0);
   document.getElementById('s-month').textContent=grand+'₪';
-  // Per-child strip
   const strip=document.getElementById('kids-money-strip'); strip.innerHTML='';
   S.family.children.forEach(child=>{
     const amt=monthC.filter(c=>c.childId===child.id).reduce((s,c)=>s+c.price,0);
@@ -975,7 +1133,9 @@ window.delComp=async function(id){
   catch(e){showToast('שגיאה','err');}
 };
 
-// ── TODAY ──
+// ══════════════════════════════════════════
+//  TODAY (parent)
+// ══════════════════════════════════════════
 async function renderToday(){
   const date=getDate('parent'); const el=document.getElementById('today-content');
   el.innerHTML=`<div class="empty"><div class="empty-icon">⏳</div></div>`;
@@ -1003,17 +1163,9 @@ async function renderToday(){
   }
 }
 
-// ── EMOJI GRID ──
-function buildEmojiGrid(gid,emojis,sel){
-  const g=document.getElementById(gid); g.innerHTML='';
-  emojis.forEach(em=>{
-    const s=document.createElement('span'); s.className='emoji-opt'+(em===sel?' sel':''); s.textContent=em;
-    s.onclick=()=>{g.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('sel'));s.classList.add('sel');};
-    g.appendChild(s);
-  });
-}
-
-// ── TASKS ──
+// ══════════════════════════════════════════
+//  TASKS MANAGEMENT
+// ══════════════════════════════════════════
 function renderTasks(){
   const el=document.getElementById('tasks-list'); el.innerHTML='';
   if(!S.family.tasks.length){el.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">אין משימות</div></div>`;return;}
@@ -1039,7 +1191,9 @@ window.saveTask=async function(){
 };
 window.delTask=async function(id){if(!confirm('למחוק?'))return;const tasks=S.family.tasks.filter(t=>t.id!==id);try{await updateDoc(doc(db,'families',S.familyId),{tasks});showToast('נמחק','ok');}catch(e){showToast('שגיאה','err');}};
 
-// ── CHILDREN ──
+// ══════════════════════════════════════════
+//  CHILDREN MANAGEMENT
+// ══════════════════════════════════════════
 function renderChildren(){
   const el=document.getElementById('children-list'); el.innerHTML='';
   if(!S.family.children.length){el.innerHTML=`<div class="empty"><div class="empty-icon">👧</div><div class="empty-title">אין ילדים</div></div>`;return;}
@@ -1061,12 +1215,14 @@ window.saveChild=async function(){
   let children=[...S.family.children];
   if(id) children=children.map(c=>c.id===id?{...c,name,avatar,pin}:c);
   else children.push({id:uid(),name,avatar,pin});
-  try{await updateDoc(doc(db,'families',S.familyId),{children});closeModal('modal-child');showToast('נשמר ✅','ok');renderChildButtons();}
+  try{await updateDoc(doc(db,'families',S.familyId),{children});closeModal('modal-child');showToast('נשמר ✅','ok');renderChildGrid();}
   catch(e){showToast('שגיאה','err');}
 };
-window.delChild=async function(id){if(!confirm('למחוק?'))return;const children=S.family.children.filter(c=>c.id!==id);try{await updateDoc(doc(db,'families',S.familyId),{children});showToast('נמחק','ok');renderChildButtons();}catch(e){showToast('שגיאה','err');}};
+window.delChild=async function(id){if(!confirm('למחוק?'))return;const children=S.family.children.filter(c=>c.id!==id);try{await updateDoc(doc(db,'families',S.familyId),{children});showToast('נמחק','ok');renderChildGrid();}catch(e){showToast('שגיאה','err');}};
 
-// ── REPORT ──
+// ══════════════════════════════════════════
+//  REPORT
+// ══════════════════════════════════════════
 function initReport(){
   const sel=document.getElementById('report-child-sel');
   sel.innerHTML='<option value="all">כל הילדים</option>';
@@ -1117,23 +1273,49 @@ window.generateReport=async function(){
   el.appendChild(bar);
 };
 
-// ── CHILD CHART ──
+// ══════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════
+function renderSettings(){
+  document.getElementById('fam-id-disp').textContent=S.familyId||'';
+  document.getElementById('ver-settings').textContent=VERSION;
+  // Generate and display join code
+  const fbCfg=JSON.parse(localStorage.getItem('fbConfig')||'{}');
+  const code=encodeJoinCode(fbCfg, S.familyId);
+  document.getElementById('join-code-display').textContent=code;
+}
+window.copyJoinCode=function(){
+  const code=document.getElementById('join-code-display').textContent;
+  navigator.clipboard?.writeText(code).then(()=>showToast('קוד הועתק ✅','ok')).catch(()=>{
+    showToast('קוד: '+code,'ok');
+  });
+};
+window.updatePin=async function(){
+  const p=document.getElementById('new-pin').value.trim();
+  if(p.length!==4||isNaN(p)){showToast('PIN חייב להיות 4 ספרות','err');return;}
+  try{await updateDoc(doc(db,'families',S.familyId),{parentPin:p});document.getElementById('new-pin').value='';showToast('PIN עודכן ✅','ok');}
+  catch(e){showToast('שגיאה','err');}
+};
+
+// ══════════════════════════════════════════
+//  CHILD HOME
+// ══════════════════════════════════════════
 function renderChart(monthComps,currentMonth){
   const days=daysInMonth(currentMonth);
-  const todayStr=ymd();
+  const todayS=ymd();
   const[,cm]=currentMonth.split('-');
-  const dayCounts={};
-  monthComps.forEach(c=>{dayCounts[c.date]=(dayCounts[c.date]||0)+1;});
-  const maxC=Math.max(1,...Object.values(dayCounts));
+  const dc={};
+  monthComps.forEach(c=>{dc[c.date]=(dc[c.date]||0)+1;});
+  const maxC=Math.max(1,...Object.values(dc));
   const totalT=monthComps.length;
   const totalM=monthComps.reduce((s,c)=>s+c.price,0);
-  const actDays=Object.keys(dayCounts).length;
+  const actDays=Object.keys(dc).length;
   let bars='';
   for(let d=1;d<=days;d++){
     const ds=currentMonth+'-'+pad(d);
-    const cnt=dayCounts[ds]||0;
+    const cnt=dc[ds]||0;
     const h=cnt>0?Math.max(8,Math.round((cnt/maxC)*52)):3;
-    const isToday=ds===todayStr;
+    const isToday=ds===todayS;
     const isFuture=currentMonth===ym()&&d>new Date().getDate();
     bars+=`<div class="chart-bar-col"><div class="chart-bar ${cnt>0?(isToday?'today-bar':'active'):'empty'}" style="height:${h}px;opacity:${isFuture?.3:1};"></div><div class="chart-day-lbl" style="color:${isToday?'var(--gold-dark)':'var(--text2)'};font-weight:${isToday?900:700};">${d}</div></div>`;
   }
@@ -1148,10 +1330,8 @@ function renderChart(monthComps,currentMonth){
       </div>
     </div>`;
 }
-
-// ── CHILD HOME ──
 async function renderChildHome(){
-  const child=S.user;if(!child||child==='parent')return;
+  const child=S.user; if(!child||child==='parent') return;
   document.getElementById('ch-avatar').textContent=child.avatar;
   document.getElementById('ch-name').textContent=child.name;
   const selDate=getDate('child');
@@ -1164,17 +1344,17 @@ async function renderChildHome(){
   const dayEarn=dayC.reduce((s,c)=>s+c.price,0);
   const tag=document.getElementById('ch-today-tag');
   if(dayC.length>0){tag.textContent=(selDate===ymd()?'היום':'יום זה')+': +'+dayEarn+'₪';tag.style.display='flex';}else tag.style.display='none';
-  const grid=document.getElementById('child-tasks-grid');grid.innerHTML='';
+  const grid=document.getElementById('child-tasks-grid'); grid.innerHTML='';
   S.family.tasks.forEach(task=>{
     const cnt=dayC.filter(c=>c.taskId===task.id).length;
-    const card=document.createElement('div');card.className='task-card'+(cnt>0?' done':'');
+    const card=document.createElement('div'); card.className='task-card'+(cnt>0?' done':'');
     card.innerHTML=`${cnt>0?`<div class="task-done-badge">${cnt>1?cnt:'✓'}</div>`:''}${cnt>1?`<div class="task-count">${cnt}</div>`:''}
       <div class="task-emoji">${task.emoji}</div><div class="task-name">${task.name}</div>
       <div class="task-price-tag">+${task.price}₪</div>`;
     card.onclick=()=>openConfirmTask(task,selDate);
     grid.appendChild(card);
   });
-  const list=document.getElementById('child-today-list');list.innerHTML='';
+  const list=document.getElementById('child-today-list'); list.innerHTML='';
   if(!dayC.length){list.innerHTML='<p style="font-size:12px;color:var(--text2);text-align:center;padding:12px;">עוד לא ביצעת משימות ביום זה</p>';}
   else[...dayC].reverse().forEach(c=>list.appendChild(mkComp(c,false)));
   renderChart(monthC,curMonth);
@@ -1189,26 +1369,28 @@ window.openConfirmTask=function(task,date){
   openModal('modal-confirm');
 };
 window.doCompleteTask=async function(){
-  const task=S.pendingTask;const child=S.user;
-  if(!task||!child||child==='parent')return;
+  const task=S.pendingTask; const child=S.user;
+  if(!task||!child||child==='parent') return;
   closeModal('modal-confirm');
   const date=task._date||ymd();
   try{
     await addDoc(collection(db,'completions'),{
-      familyId:S.familyId,childId:child.id,childName:child.name,
-      taskId:task.id,taskName:task.name,price:task.price,
-      date,month:date.slice(0,7),timestamp:serverTimestamp()
+      familyId:S.familyId, childId:child.id, childName:child.name,
+      taskId:task.id, taskName:task.name, price:task.price,
+      date, month:date.slice(0,7), timestamp:serverTimestamp()
     });
-    confetti();showToast('🎉 כל הכבוד! +'+task.price+'₪','ok');
+    confetti(); showToast('🎉 כל הכבוד! +'+task.price+'₪','ok');
     await renderChildHome();
-  }catch(e){showToast('שגיאה. נסה שוב','err');}
+  }catch(e){showToast('שגיאה','err');}
 };
 
-// ── HISTORY ──
+// ══════════════════════════════════════════
+//  HISTORY
+// ══════════════════════════════════════════
 function initHistory(){document.getElementById('hist-month-lbl').textContent=fmtMonth(S.histMonth);renderHistory();}
 async function renderHistory(){
-  const child=S.user;if(!child||child==='parent')return;
-  const sumEl=document.getElementById('hist-summary');const el=document.getElementById('hist-content');
+  const child=S.user; if(!child||child==='parent') return;
+  const sumEl=document.getElementById('hist-summary'); const el=document.getElementById('hist-content');
   el.innerHTML=`<div class="empty"><div class="empty-icon">⏳</div></div>`;
   const comps=await getCompletions({month:S.histMonth,childId:child.id});
   const total=comps.reduce((s,c)=>s+c.price,0);
@@ -1217,37 +1399,38 @@ async function renderHistory(){
   el.innerHTML=`<div class="card" style="overflow:hidden;padding:0;"><table class="report-table"><thead><tr><th>תאריך</th><th>משימה</th><th>₪</th></tr></thead><tbody>${comps.map(c=>`<tr><td>${fmtDate(c.date)}</td><td>${c.taskName}</td><td style="color:var(--success);font-weight:800;">+${c.price}</td></tr>`).join('')}</tbody></table></div>`;
 }
 
-// ── SETTINGS ──
-window.updatePin=async function(){
-  const p=document.getElementById('new-pin').value.trim();
-  if(p.length!==4||isNaN(p)){showToast('PIN חייב להיות 4 ספרות','err');return;}
-  try{await updateDoc(doc(db,'families',S.familyId),{parentPin:p});document.getElementById('new-pin').value='';showToast('PIN עודכן ✅','ok');}
-  catch(e){showToast('שגיאה','err');}
-};
-
-// ── INIT ──
+// ══════════════════════════════════════════
+//  INIT  – determine flow on app start
+// ══════════════════════════════════════════
 async function init(){
   initSetupKids();
+  const role=localStorage.getItem('role');
   const cfg=localStorage.getItem('fbConfig');
   const fid=localStorage.getItem('familyId');
-  if(cfg&&fid){
+
+  if(role&&cfg&&fid){
     try{
       const ok=await initFB(JSON.parse(cfg));
       if(ok){
-        S.familyId=fid;
+        S.role=role; S.familyId=fid;
         const snap=await getDoc(doc(db,'families',fid));
         if(snap.exists()){
           S.family=snap.data();
-          subscribeFamily();   // will call renderChildButtons on every update
-          showLoginScreen();   // shows login screen
-          // Extra explicit call after a tick, ensuring DOM is ready
-          setTimeout(renderChildButtons, 50);
+          subscribeFamily();
+          if(role==='parent'){
+            // Parent → show PIN screen
+            showScreen('screen-parent-pin');
+          } else {
+            // Child → show child select
+            showScreen('screen-child-select');
+          }
           return;
         }
       }
     }catch(e){console.error(e);}
   }
-  showScreen('screen-setup');
+  // No saved config → welcome screen
+  showScreen('screen-welcome');
 }
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
