@@ -298,7 +298,7 @@
 </head>
 <body>
 
-<div class="ver" id="ver-badge">v2.1</div>
+<div class="ver" id="ver-badge">v2.2</div>
 
 <!-- LOADING -->
 <div id="screen-loading" class="screen active">
@@ -749,7 +749,7 @@ import {
 // ══════════════════════════════════════════
 //  VERSION & CONSTANTS
 // ══════════════════════════════════════════
-const VERSION = 'v2.1';
+const VERSION = 'v2.2';
 document.getElementById('ver-badge').textContent = VERSION;
 
 const TASK_EM  = ['👕','🍽️','♻️','🗑️','🛏️','🧹','🧺','🛒','🐕','📚','🌱','🚿','🪴','🧴','🍳','🚗','💊','✉️','📦','🔧','🏠','🌿','⚡','🎨','🎵'];
@@ -1324,12 +1324,27 @@ window.generateReport=async function(){
 // ══════════════════════════════════════════
 //  SETTINGS
 // ══════════════════════════════════════════
-function renderSettings(){
+async function renderSettings(){
   document.getElementById('fam-id-disp').textContent=S.familyId||'';
   document.getElementById('ver-settings').textContent=VERSION;
   const fbCfg=JSON.parse(localStorage.getItem('fbConfig')||'{}');
-  const code=localStorage.getItem('joinCode')||'????-????';
-  document.getElementById('join-code-display').textContent=code;
+
+  // Get existing code or generate a new one
+  let joinCode=localStorage.getItem('joinCode');
+  if(!joinCode||joinCode.includes('?')){
+    joinCode=generateShortCode();
+    localStorage.setItem('joinCode',joinCode);
+    // Save to Firebase so children can look it up
+    try{
+      const raw=rawCode(joinCode);
+      await setDoc(doc(db,'joinCodes',raw),{
+        a:fbCfg.apiKey, p:fbCfg.projectId, f:S.familyId,
+        created:new Date().toISOString()
+      });
+    }catch(e){ console.error('Failed to save join code:',e); }
+  }
+
+  document.getElementById('join-code-display').textContent=joinCode;
   document.getElementById('join-project-display').textContent=fbCfg.projectId||'';
 }
 window.copyJoinCode=function(){
