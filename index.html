@@ -307,7 +307,7 @@
 </head>
 <body>
 
-<div class="ver" id="ver-badge">v2.4</div>
+<div class="ver" id="ver-badge">v2.5</div>
 
 <!-- LOADING -->
 <div id="screen-loading" class="screen active">
@@ -543,7 +543,7 @@
   <div style="padding:12px 12px 0;">
     <div class="date-selector">
       <label>📅</label>
-      <input type="date" id="parent-date-picker" onchange="renderToday()">
+      <input type="date" id="parent-date-picker" onchange="debounceRender('parent-date-picker',renderToday)" oninput="debounceRender('parent-date-picker',renderToday)">
       <button class="date-today-btn" onclick="setTodayDate('parent')">היום</button>
     </div>
   </div>
@@ -680,7 +680,7 @@
   <div class="tasks-body">
     <div class="date-selector">
       <label>📅</label>
-      <input type="date" id="child-date-picker" onchange="renderChildHome()">
+      <input type="date" id="child-date-picker" onchange="debounceRender('child-date-picker',renderChildHome)" oninput="debounceRender('child-date-picker',renderChildHome)">
       <button class="date-today-btn" onclick="setTodayDate('child')">היום</button>
     </div>
     <div class="tasks-header">
@@ -772,13 +772,27 @@ import {
 // ══════════════════════════════════════════
 //  VERSION & CONSTANTS
 // ══════════════════════════════════════════
-const VERSION = 'v2.4';
+const VERSION = 'v2.5';
 document.getElementById('ver-badge').textContent = VERSION;
 // Inject version badge into every app-header (centered)
 document.querySelectorAll('.app-header').forEach(h=>{
   const v=document.createElement('span');
   v.className='header-ver'; v.textContent=VERSION;
   h.appendChild(v);
+});
+
+// Reliable date picker listeners for mobile — onchange alone isn't enough on Android
+function attachDatePicker(id, fn){
+  const el=document.getElementById(id);
+  if(!el) return;
+  ['change','input','blur'].forEach(evt=>el.addEventListener(evt,()=>{
+    if(el.value) debounceRender(id, fn);
+  }));
+}
+// Attach after DOM ready - wrap in requestAnimationFrame to ensure elements exist
+requestAnimationFrame(()=>{
+  attachDatePicker('parent-date-picker', renderToday);
+  attachDatePicker('child-date-picker',  renderChildHome);
 });
 
 const TASK_EM  = ['👕','🍽️','♻️','🗑️','🛏️','🧹','🧺','🛒','🐕','📚','🌱','🚿','🪴','🧴','🍳','🚗','💊','✉️','📦','🔧','🏠','🌿','⚡','🎨','🎵'];
@@ -1134,7 +1148,19 @@ function shake(id){ const el=document.getElementById(id); el.style.animation='sh
 // ══════════════════════════════════════════
 //  DATE PICKERS
 // ══════════════════════════════════════════
-function getDate(who){ const el=document.getElementById(who==='parent'?'parent-date-picker':'child-date-picker'); return el?.value||ymd(); }
+function getDate(who){
+  const id=who==='parent'?'parent-date-picker':'child-date-picker';
+  const el=document.getElementById(id);
+  const val=el?.value;
+  return (val&&val.length===10)?val:ymd();
+}
+
+// Debounce wrapper — prevents double-firing from onchange + oninput + listener
+let _dateDebounce={};
+function debounceRender(key, fn, ms=120){
+  clearTimeout(_dateDebounce[key]);
+  _dateDebounce[key]=setTimeout(fn, ms);
+}
 window.setTodayDate=function(who){ const id=who==='parent'?'parent-date-picker':'child-date-picker'; const el=document.getElementById(id); if(el){el.value=ymd();if(who==='parent')renderToday();else renderChildHome();} };
 function initPicker(who){ const id=who==='parent'?'parent-date-picker':'child-date-picker'; const el=document.getElementById(id); if(el&&!el.value) el.value=ymd(); }
 
