@@ -307,7 +307,7 @@
 </head>
 <body>
 
-<div class="ver" id="ver-badge">v2.5</div>
+<div class="ver" id="ver-badge">v2.6</div>
 
 <!-- LOADING -->
 <div id="screen-loading" class="screen active">
@@ -324,12 +324,21 @@
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;">
     <div class="welcome-logo">⭐</div>
     <div class="welcome-title">משימות ילדים</div>
-    <div class="welcome-sub">אתה הורה או ילד/ה?</div>
+    <div class="welcome-sub">איך תרצה להמשיך?</div>
     <button class="welcome-btn welcome-btn-parent" onclick="startParent()">
       <span class="welcome-btn-icon">👨‍👩‍👧</span>
       <div>
-        <div class="welcome-btn-title">אני הורה</div>
-        <div class="welcome-btn-sub">הגדרה ראשונית + ניהול</div>
+        <div class="welcome-btn-title">הגדרה ראשונה</div>
+        <div class="welcome-btn-sub">אני הורה — התחלה חדשה</div>
+      </div>
+      <span class="welcome-btn-arrow">←</span>
+    </button>
+    <button class="welcome-btn" onclick="showScreen('screen-parent-reconnect')"
+      style="background:linear-gradient(135deg,#fff0f0,#ffe0e0);border-color:#E07535;">
+      <span class="welcome-btn-icon">🔄</span>
+      <div>
+        <div class="welcome-btn-title">התחבר מחדש</div>
+        <div class="welcome-btn-sub">הורה שהתקין מחדש — שחזור מ-Firebase</div>
       </div>
       <span class="welcome-btn-arrow">←</span>
     </button>
@@ -345,8 +354,33 @@
 </div>
 
 <!-- ══════════════════════════════════════════
-     PARENT SETUP  – first time parent config
+     PARENT RECONNECT  – recover existing family
 ══════════════════════════════════════════ -->
+<div id="screen-parent-reconnect" class="screen">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+    <div style="font-size:56px;margin-bottom:14px;">🔄</div>
+    <div style="font-size:22px;font-weight:900;color:var(--primary);margin-bottom:6px;">שחזור אפליקציית הורה</div>
+    <div style="font-size:13px;color:var(--text2);text-align:center;line-height:1.6;margin-bottom:24px;">
+      הזן את קוד החיבור הישן שלך<br>
+      כל הנתונים ישוחזרו מ-Firebase
+    </div>
+    <div style="width:100%;margin-bottom:12px;">
+      <label class="form-label" style="text-align:center;display:block;margin-bottom:6px;">Project ID</label>
+      <input class="form-input" id="recon-project" type="text"
+        placeholder="my-family-tasks"
+        style="text-align:center;font-size:15px;">
+    </div>
+    <div style="width:100%;margin-bottom:18px;">
+      <label class="form-label" style="text-align:center;display:block;margin-bottom:6px;">קוד חיבור ישן</label>
+      <input class="join-code-input" id="recon-code" type="text" maxlength="9"
+        placeholder="ABCD-1234"
+        oninput="formatJoinCode(this)"
+        style="background:white;">
+    </div>
+    <button class="btn btn-primary" onclick="reconnectParent()">🔄 שחזר חשבון</button>
+    <button class="join-back-btn" onclick="showScreen('screen-welcome')">← חזור</button>
+  </div>
+</div>
 <div id="screen-parent-setup" class="screen">
   <div class="setup-hero">
     <div style="font-size:44px;margin-bottom:8px;">🔧</div>
@@ -772,7 +806,7 @@ import {
 // ══════════════════════════════════════════
 //  VERSION & CONSTANTS
 // ══════════════════════════════════════════
-const VERSION = 'v2.5';
+const VERSION = 'v2.6';
 document.getElementById('ver-badge').textContent = VERSION;
 // Inject version badge into every app-header (centered)
 document.querySelectorAll('.app-header').forEach(h=>{
@@ -929,6 +963,48 @@ function confetti(){
 // ══════════════════════════════════════════
 window.startParent = function(){ showScreen('screen-parent-setup'); };
 window.startChild  = function(){ showScreen('screen-child-join'); };
+
+// ══════════════════════════════════════════
+//  PARENT RECONNECT  – restore existing family after reinstall
+// ══════════════════════════════════════════
+window.reconnectParent=async function(){
+  const projId=document.getElementById('recon-project').value.trim();
+  const code=rawCode(document.getElementById('recon-code').value.trim());
+  if(!projId){ showToast('נא להזין Project ID','err'); return; }
+  if(code.length<6){ showToast('נא להזין קוד חיבור','err'); return; }
+
+  showToast('מחפש...','');
+  // Fetch joinCode doc via Firestore REST (no SDK needed yet)
+  const url=`https://firestore.googleapis.com/v1/projects/${projId}/databases/(default)/documents/joinCodes/${code}`;
+  try{
+    const res=await fetch(url);
+    if(!res.ok){ showToast('קוד לא נמצא — בדוק Project ID וקוד','err'); return; }
+    const json=await res.json();
+    const fields=json.fields||{};
+    const apiKey=fields.a?.stringValue;
+    const projIdFromDoc=fields.p?.stringValue;
+    const familyId=fields.f?.stringValue;
+    if(!apiKey||!familyId){ showToast('קוד לא תקין','err'); return; }
+
+    const fbConfig={apiKey, authDomain:projIdFromDoc+'.firebaseapp.com', projectId:projIdFromDoc};
+    const ok=await initFB(fbConfig);
+    if(!ok){ showToast('שגיאה בחיבור ל-Firebase','err'); return; }
+
+    const snap=await getDoc(doc(db,'families',familyId));
+    if(!snap.exists()){ showToast('משפחה לא נמצאה','err'); return; }
+
+    // Restore as parent
+    const joinCode=document.getElementById('recon-code').value.trim().toUpperCase();
+    localStorage.setItem('role','parent');
+    localStorage.setItem('fbConfig',JSON.stringify(fbConfig));
+    localStorage.setItem('familyId',familyId);
+    localStorage.setItem('joinCode',joinCode);
+    S.role='parent'; S.familyId=familyId; S.family=snap.data();
+    subscribeFamily();
+    showToast('שוחזר בהצלחה! 🎉','ok');
+    showScreen('screen-parent-pin');
+  }catch(e){ showToast('שגיאה: '+e.message,'err'); }
+};
 
 // ══════════════════════════════════════════
 //  PARENT SETUP
