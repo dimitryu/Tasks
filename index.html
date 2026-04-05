@@ -307,7 +307,7 @@
 </head>
 <body>
 
-<div class="ver" id="ver-badge">v2.6</div>
+<div class="ver" id="ver-badge">v2.7</div>
 
 <!-- LOADING -->
 <div id="screen-loading" class="screen active">
@@ -806,7 +806,7 @@ import {
 // ══════════════════════════════════════════
 //  VERSION & CONSTANTS
 // ══════════════════════════════════════════
-const VERSION = 'v2.6';
+const VERSION = 'v2.7';
 document.getElementById('ver-badge').textContent = VERSION;
 // Inject version badge into every app-header (centered)
 document.querySelectorAll('.app-header').forEach(h=>{
@@ -1421,26 +1421,79 @@ function initReport(){
   document.getElementById('report-date-from').value='';
   document.getElementById('report-date-to').value='';
   document.getElementById('report-month-lbl').textContent=fmtMonth(S.reportMonth);
-  renderReportPaidBar();
+  renderReportPaidBar([]);
   generateReport();
 }
-function renderReportPaidBar(){
+/**
+ * Render the paid-status bar above report results.
+ * months = array of unique yyyy-mm strings found in current results.
+ * If empty (no results yet), clears bar.
+ */
+function renderReportPaidBar(months){
   const bar=document.getElementById('report-paid-bar'); if(!bar) return;
+  if(!months||months.length===0){ bar.innerHTML=''; return; }
+
+  const allPaid=months.every(m=>isPaidMonth(m));
+  const somePaid=months.some(m=>isPaidMonth(m));
   const hasRange=document.getElementById('report-date-from')?.value||document.getElementById('report-date-to')?.value;
-  if(hasRange){ bar.innerHTML=''; return; }
-  const paid=isPaidMonth(S.reportMonth);
-  bar.innerHTML=`<div class="paid-banner" style="${paid?'':'background:var(--bg2);border-color:var(--border);'}">
-    <span class="paid-banner-text" style="${paid?'':'color:var(--text2)'}">
-      ${paid?'✅ החודש משולם':'💰 סמן כמשולם'}
-    </span>
-    <button class="btn ${paid?'btn-ghost':'btn-success'} btn-sm" style="width:auto;font-size:12px;padding:6px 14px;"
-      onclick="togglePaidMonth('${S.reportMonth}')">
-      ${paid?'בטל סימון':'סמן ✓'}
-    </button>
-  </div>`;
+
+  if(hasRange){
+    // Date-range mode: show months summary + mark-all button
+    const unpaidMonths=months.filter(m=>!isPaidMonth(m));
+    const paidMonths=months.filter(m=>isPaidMonth(m));
+    const monthLabels=months.map(m=>fmtMonth(m)).join(', ');
+
+    if(allPaid){
+      bar.innerHTML=`<div class="paid-banner">
+        <span class="paid-banner-text">✅ כל התקופה משולמת<br><span style="font-size:10px;font-weight:600;">${monthLabels}</span></span>
+        <button class="btn btn-ghost btn-sm" style="width:auto;font-size:11px;padding:5px 12px;"
+          onclick="toggleRangePaid(${JSON.stringify(months)},false)">בטל ✓</button>
+      </div>`;
+    } else {
+      bar.innerHTML=`<div class="paid-banner" style="background:var(--bg2);border-color:var(--border);">
+        <span class="paid-banner-text" style="color:var(--text2);">
+          💰 סמן כמשולם${somePaid?` (${paidMonths.length}/${months.length} משולמים)`:''}<br>
+          <span style="font-size:10px;">${monthLabels}</span>
+        </span>
+        <button class="btn btn-success btn-sm" style="width:auto;font-size:11px;padding:5px 12px;"
+          onclick="toggleRangePaid(${JSON.stringify(unpaidMonths)},true)">סמן ✓</button>
+      </div>`;
+    }
+  } else {
+    // Single month mode
+    const paid=isPaidMonth(S.reportMonth);
+    bar.innerHTML=`<div class="paid-banner" style="${paid?'':'background:var(--bg2);border-color:var(--border);'}">
+      <span class="paid-banner-text" style="${paid?'':'color:var(--text2)'}">
+        ${paid?'✅ החודש משולם':'💰 סמן כמשולם'}
+      </span>
+      <button class="btn ${paid?'btn-ghost':'btn-success'} btn-sm" style="width:auto;font-size:12px;padding:6px 14px;"
+        onclick="togglePaidMonth('${S.reportMonth}')">
+        ${paid?'בטל סימון':'סמן ✓'}
+      </button>
+    </div>`;
+  }
 }
+
+/** Mark/unmark multiple months at once (for date-range mode) */
+window.toggleRangePaid=async function(months, markAsPaid){
+  const action=markAsPaid?'לסמן':'לבטל סימון';
+  const label=months.map(m=>fmtMonth(m)).join(', ');
+  if(!confirm(`${action} את: ${label}?`)) return;
+  const current=S.family.paidMonths||[];
+  let updated;
+  if(markAsPaid){
+    updated=[...new Set([...current,...months])];
+  } else {
+    updated=current.filter(m=>!months.includes(m));
+  }
+  try{
+    await updateDoc(doc(db,'families',S.familyId),{paidMonths:updated});
+    showToast(markAsPaid?`✅ סומן כמשולם`:`בוטל סימון`,'ok');
+    generateReport();
+  }catch(e){ showToast('שגיאה','err'); }
+};
 window.changeMonth=function(ctx,d){
-  if(ctx==='report'){S.reportMonth=shiftM(S.reportMonth,d);document.getElementById('report-month-lbl').textContent=fmtMonth(S.reportMonth);renderReportPaidBar();generateReport();}
+  if(ctx==='report'){S.reportMonth=shiftM(S.reportMonth,d);document.getElementById('report-month-lbl').textContent=fmtMonth(S.reportMonth);renderReportPaidBar([]);generateReport();}
   else{S.histMonth=shiftM(S.histMonth,d);document.getElementById('hist-month-lbl').textContent=fmtMonth(S.histMonth);renderHistory();}
 };
 function shiftM(s,d){let[y,m]=[...s.split('-').map(Number)];m+=d;if(m>12){m=1;y++;}if(m<1){m=12;y--;}return y+'-'+pad(m);}
@@ -1450,7 +1503,7 @@ window.generateReport=async function(){
   const dateTo=document.getElementById('report-date-to')?.value||'';
   const el=document.getElementById('report-content');
   el.innerHTML=`<div class="empty"><div class="empty-icon">⏳</div></div>`;
-  renderReportPaidBar();
+  renderReportPaidBar([]); // clear while loading
 
   let comps;
   if(dateFrom||dateTo){
@@ -1463,8 +1516,15 @@ window.generateReport=async function(){
 
   if(!comps.length){
     const label=(dateFrom||dateTo)?`${dateFrom?fmtDate(dateFrom):''}–${dateTo?fmtDate(dateTo):''}`:`${fmtMonth(S.reportMonth)}`;
-    el.innerHTML=`<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">אין נתונים ל-${label}</div></div>`;return;
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">אין נתונים ל-${label}</div></div>`;
+    renderReportPaidBar([]);
+    return;
   }
+
+  // Extract unique months from results and render paid bar
+  const uniqueMonths=[...new Set(comps.map(c=>c.month))].sort();
+  renderReportPaidBar(uniqueMonths);
+
   el.innerHTML='';
 
   // Helper: paid row style
@@ -1499,10 +1559,11 @@ window.generateReport=async function(){
       <tbody>${comps.map(c=>`<tr style="${paidStyle(c.month)}"><td>${fmtDate(c.date)}</td><td style="direction:ltr;font-size:11px;">${fmtTime(c.timestamp)}</td><td>${c.taskName}</td><td style="color:var(--success);font-weight:800;">+${c.price}</td>${paidCell(c.month)}</tr>`).join('')}</tbody></table></div>`;
     el.appendChild(wrap);
   }
-  const paidStatus=(!dateFrom&&!dateTo&&isPaidMonth(S.reportMonth));
+
+  const allPaidNow=uniqueMonths.every(m=>isPaidMonth(m))&&!dateFrom&&!dateTo;
   const totalBar=document.createElement('div');totalBar.className='report-total-bar';
-  totalBar.style.cssText=paidStatus?'background:linear-gradient(135deg,#2e7d32,#43a047);':'';
-  totalBar.innerHTML=`<span style="font-size:13px;font-weight:700;opacity:.9;">${paidStatus?'✅ שולם':'💰 סה"כ'}</span><span style="font-size:22px;font-weight:900;">${grand}₪</span>`;
+  totalBar.style.cssText=allPaidNow?'background:linear-gradient(135deg,#2e7d32,#43a047);':'';
+  totalBar.innerHTML=`<span style="font-size:13px;font-weight:700;opacity:.9;">${allPaidNow?'✅ שולם':'💰 סה"כ'}</span><span style="font-size:22px;font-weight:900;">${grand}₪</span>`;
   el.appendChild(totalBar);
 };
 
@@ -1510,7 +1571,7 @@ window.clearReportDates=function(){
   document.getElementById('report-date-from').value='';
   document.getElementById('report-date-to').value='';
   toggleReportNav();
-  renderReportPaidBar();
+  renderReportPaidBar([]);
   generateReport();
 };
 window.toggleReportNav=function(){
