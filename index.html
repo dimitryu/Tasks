@@ -309,7 +309,7 @@
 </head>
 <body>
 
-<div class="ver" id="ver-badge">v2.9</div>
+<div class="ver" id="ver-badge">v3.0</div>
 
 <!-- LOADING -->
 <div id="screen-loading" class="screen active">
@@ -808,7 +808,7 @@ import {
 // ══════════════════════════════════════════
 //  VERSION & CONSTANTS
 // ══════════════════════════════════════════
-const VERSION = 'v2.9';
+const VERSION = 'v3.0';
 document.getElementById('ver-badge').textContent = VERSION;
 // Inject version badge into every app-header (centered)
 document.querySelectorAll('.app-header').forEach(h=>{
@@ -1436,7 +1436,6 @@ function renderReportPaidBar(months, comps){
   bar.innerHTML='';
   if(!months||months.length===0) return;
 
-  const compPaid=(c)=>c.paid===true;
   const unpaidComps=(comps||[]).filter(c=>!compPaid(c));
   const unpaidMonths=[...new Set(unpaidComps.map(c=>c.month))];
   const allPaid=unpaidComps.length===0;
@@ -1518,8 +1517,7 @@ window.generateReport=async function(){
 
   el.innerHTML='';
 
-  // Per-completion paid check (c.paid===true means already paid, undefined/false = unpaid)
-  const compPaid=(c)=>c.paid===true;
+  // Per-completion paid check (uses global compPaid with legacy fallback)
   const paidStyle=(c)=>compPaid(c)?'background:#f0fdf4;':'background:#fff8f0;';
   const paidCell=(c)=>compPaid(c)
     ?'<td style="font-size:10px;color:#1b5e20;font-weight:900;white-space:nowrap;">✅ שולם</td>'
@@ -1609,8 +1607,14 @@ window.toggleReportNav=function(){
 // ══════════════════════════════════════════
 //  PAID MONTHS
 // ══════════════════════════════════════════
-function isPaidMonth(month){
-  return !!(S.family.paidMonths && S.family.paidMonths.includes(month));
+// Per-completion paid check — backward compatible:
+// New completions: use explicit c.paid field (true/false)
+// Old completions (no paid field = undefined): fall back to legacy paidMonths array
+function compPaid(c){
+  if(c.paid===true) return true;
+  if(c.paid===false) return false;
+  // Legacy: no paid field → check if month was marked paid
+  return isPaidMonth(c.month);
 }
 window.togglePaidMonth=async function(month){
   const paid=isPaidMonth(month);
@@ -1744,7 +1748,7 @@ async function renderChildHome(){
 
   // Earn badge shows month total
   const monthEarn=monthC.reduce((s,c)=>s+c.price,0);
-  const monthUnpaid=monthC.filter(c=>c.paid!==true).reduce((s,c)=>s+c.price,0);
+  const monthUnpaid=monthC.filter(c=>!compPaid(c)).reduce((s,c)=>s+c.price,0);
   const earnBadge=document.getElementById('ch-month-earn');
   if(earnBadge){
     earnBadge.textContent=monthUnpaid+'₪';
@@ -1834,8 +1838,8 @@ async function renderHistory(){
   el.innerHTML=`<div class="empty"><div class="empty-icon">⏳</div></div>`;
   const comps=await getCompletions({month:S.histMonth,childId:child.id});
   if(!comps.length){sumEl.innerHTML='';el.innerHTML=`<div class="empty"><div class="empty-icon">📅</div><div class="empty-title">אין משימות ב-${fmtMonth(S.histMonth)}</div></div>`;return;}
-  const paidTotal=comps.filter(c=>c.paid===true).reduce((s,c)=>s+c.price,0);
-  const unpaidTotal=comps.filter(c=>c.paid!==true).reduce((s,c)=>s+c.price,0);
+  const paidTotal=comps.filter(c=>compPaid(c)).reduce((s,c)=>s+c.price,0);
+  const unpaidTotal=comps.filter(c=>!compPaid(c)).reduce((s,c)=>s+c.price,0);
   const total=paidTotal+unpaidTotal;
   sumEl.innerHTML=`<div class="card" style="text-align:center;margin-bottom:12px;">
     <div style="font-size:36px;margin-bottom:6px;">${unpaidTotal===0?'✅':'🏆'}</div>
@@ -1846,11 +1850,11 @@ async function renderHistory(){
   </div>`;
   el.innerHTML=`<div class="card" style="overflow:hidden;padding:0;"><table class="report-table">
     <thead><tr><th>תאריך</th><th>משימה</th><th>₪</th><th></th></tr></thead>
-    <tbody>${comps.map(c=>`<tr style="${c.paid===true?'background:#f0fdf4;':'background:#fff8f0;'}">
+    <tbody>${comps.map(c=>`<tr style="${compPaid(c)?'background:#f0fdf4;':'background:#fff8f0;'}">
       <td>${fmtDate(c.date)}</td><td>${c.taskName}</td>
       <td style="color:var(--success);font-weight:800;">+${c.price}</td>
       <td style="display:flex;align-items:center;gap:4px;">
-        <span style="font-size:10px;">${c.paid===true?'✅':'🆕'}</span>
+        <span style="font-size:10px;">${compPaid(c)?'✅':'🆕'}</span>
         <button class="del-btn" onclick="delComp('${c.id}')">🗑️</button>
       </td>
     </tr>`).join('')}
@@ -1893,6 +1897,41 @@ async function init(){
 }
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+// ── BACK BUTTON NAVIGATION (Android hardware back) ──
+const _navStack = [];
+
+// Override showScreen to push state
+const _origShowScreen = window.showScreen;
+window.showScreen = function(id){
+  _origShowScreen(id);
+  // Push to browser history so Android back button can intercept
+  history.pushState({screen: id}, '', '');
+};
+
+// Intercept Android/browser back button
+window.addEventListener('popstate', function(e){
+  if(_navStack.length > 0){
+    const prev = _navStack.pop();
+    _origShowScreen(prev);
+  } else {
+    // Nothing to go back to — stay on current screen (don't exit app)
+    const cur = document.querySelector('.screen.active');
+    if(cur) history.pushState({screen: cur.id}, '', '');
+  }
+});
+
+// Track screen history for back navigation
+(function(){
+  const orig = _origShowScreen;
+  // Replace again to also track stack
+  const tracked = window.showScreen;
+  window.showScreen = function(id){
+    const cur = document.querySelector('.screen.active');
+    if(cur && cur.id !== id) _navStack.push(cur.id);
+    tracked(id);
+  };
+})();
 init();
 </script>
 </body>
