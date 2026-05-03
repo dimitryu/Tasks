@@ -1607,6 +1607,9 @@ window.toggleReportNav=function(){
 // ══════════════════════════════════════════
 //  PAID MONTHS
 // ══════════════════════════════════════════
+function isPaidMonth(month){
+  return !!(S.family.paidMonths && S.family.paidMonths.includes(month));
+}
 // Per-completion paid check — backward compatible:
 // New completions: use explicit c.paid field (true/false)
 // Old completions (no paid field = undefined): fall back to legacy paidMonths array
@@ -1633,8 +1636,8 @@ async function _applyPaidToMonths(months, markAsPaid){
     // 1. Batch-update individual completions
     const allComps=await getCompletions({});
     const toUpdate=allComps.filter(c=>months.includes(c.month));
-    // Only update ones that need changing
-    const needChange=toUpdate.filter(c=>(!!c.paid)!==markAsPaid);
+    // Only update ones that need changing (use compPaid for legacy compat)
+    const needChange=toUpdate.filter(c=>compPaid(c)!==markAsPaid);
     if(needChange.length>0){
       const batch=writeBatch(db);
       needChange.forEach(c=>{
@@ -1898,40 +1901,29 @@ async function init(){
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 
-// ── BACK BUTTON NAVIGATION (Android hardware back) ──
-const _navStack = [];
-
-// Override showScreen to push state
-const _origShowScreen = window.showScreen;
+// ── ANDROID BACK BUTTON ──
+// Simple: push a state on every screen change, pop to go back
+let _navHistory = [];
+const _realShowScreen = window.showScreen;
 window.showScreen = function(id){
-  _origShowScreen(id);
-  // Push to browser history so Android back button can intercept
-  history.pushState({screen: id}, '', '');
+  const cur = document.querySelector('.screen.active');
+  if(cur && cur.id !== id) _navHistory.push(cur.id);
+  _realShowScreen(id);
+  // Keep browser history in sync
+  history.replaceState({screen: id}, '');
 };
-
-// Intercept Android/browser back button
-window.addEventListener('popstate', function(e){
-  if(_navStack.length > 0){
-    const prev = _navStack.pop();
-    _origShowScreen(prev);
+window.addEventListener('popstate', function(){
+  if(_navHistory.length > 0){
+    const prev = _navHistory.pop();
+    _realShowScreen(prev);
+    history.replaceState({screen: prev}, '');
   } else {
-    // Nothing to go back to — stay on current screen (don't exit app)
+    // Push current state back so we don't actually exit
     const cur = document.querySelector('.screen.active');
-    if(cur) history.pushState({screen: cur.id}, '', '');
+    if(cur) history.pushState({screen: cur.id}, '');
   }
 });
 
-// Track screen history for back navigation
-(function(){
-  const orig = _origShowScreen;
-  // Replace again to also track stack
-  const tracked = window.showScreen;
-  window.showScreen = function(id){
-    const cur = document.querySelector('.screen.active');
-    if(cur && cur.id !== id) _navStack.push(cur.id);
-    tracked(id);
-  };
-})();
 init();
 </script>
 </body>
