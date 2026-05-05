@@ -309,7 +309,7 @@
 </head>
 <body>
 
-<div class="ver" id="ver-badge">v3.0</div>
+<div class="ver" id="ver-badge">v3.1</div>
 
 <!-- LOADING -->
 <div id="screen-loading" class="screen active">
@@ -808,7 +808,7 @@ import {
 // ══════════════════════════════════════════
 //  VERSION & CONSTANTS
 // ══════════════════════════════════════════
-const VERSION = 'v3.0';
+const VERSION = 'v3.1';
 document.getElementById('ver-badge').textContent = VERSION;
 // Inject version badge into every app-header (centered)
 document.querySelectorAll('.app-header').forEach(h=>{
@@ -1166,7 +1166,25 @@ function loginChild(c){
     S.user=c; initPicker('child'); showScreen('screen-child-home');
   }
 }
-window.backToChildSelect=function(){ S.user=null; showScreen('screen-child-select'); };
+/** Parent views a child's screen without logging in as that child */
+window.parentViewChild=function(childId){
+  const c=S.family.children.find(x=>x.id===childId);
+  if(!c) return;
+  S._parentViewingChild=c;
+  S.user=c;                  // set so renderChildHome works
+  initPicker('child');
+  showScreen('screen-child-home');
+};
+window.backToChildSelect=function(){
+  if(S._parentViewingChild){
+    S._parentViewingChild=null;
+    S.user='parent';
+    showScreen('screen-parent-children');
+  } else {
+    S.user=null;
+    showScreen('screen-child-select');
+  }
+};
 window.disconnectChild=function(){
   if(confirm('להתנתק מהמשפחה? תצטרך להזין קוד חיבור מחדש.')){ localStorage.clear(); location.reload(); }
 };
@@ -1175,6 +1193,13 @@ window.disconnectChild=function(){
 //  LOGOUT
 // ══════════════════════════════════════════
 window.logout=function(){
+  if(S._parentViewingChild){
+    // Parent was viewing child — return to parent home
+    S._parentViewingChild=null;
+    S.user='parent';
+    showScreen('screen-parent-home');
+    return;
+  }
   S.user=null; S.pendingChild=null;
   parentPinVal=''; childPinVal='';
   updateDots('parent'); updateDots('child');
@@ -1392,7 +1417,16 @@ function renderChildren(){
   if(!S.family.children.length){el.innerHTML=`<div class="empty"><div class="empty-icon">👧</div><div class="empty-title">אין ילדים</div></div>`;return;}
   S.family.children.forEach(c=>{
     const d=document.createElement('div'); d.className='child-manage-item';
-    d.innerHTML=`<span style="font-size:38px;">${c.avatar}</span><div style="flex:1;"><div style="font-size:15px;font-weight:800;">${c.name}</div><div style="font-size:11px;color:var(--text2);">${c.pin&&c.pin.length===4?'🔒 יש PIN':'🔓 ללא PIN'}</div></div><div style="display:flex;gap:5px;"><button class="icon-btn" onclick="openEditChild('${c.id}')">✏️</button><button class="icon-btn" onclick="delChild('${c.id}')">🗑️</button></div>`;
+    d.innerHTML=`<span style="font-size:38px;">${c.avatar}</span>
+      <div style="flex:1;">
+        <div style="font-size:15px;font-weight:800;">${c.name}</div>
+        <div style="font-size:11px;color:var(--text2);">${c.pin&&c.pin.length===4?'🔒 יש PIN':'🔓 ללא PIN'}</div>
+      </div>
+      <div style="display:flex;gap:5px;">
+        <button class="icon-btn" title="צפה כילד" onclick="parentViewChild('${c.id}')">👁️</button>
+        <button class="icon-btn" onclick="openEditChild('${c.id}')">✏️</button>
+        <button class="icon-btn" onclick="delChild('${c.id}')">🗑️</button>
+      </div>`;
     el.appendChild(d);
   });
 }
@@ -1735,14 +1769,16 @@ function renderChart(monthComps,currentMonth){
       </div>
     </div>`;
 }
-async function renderChildHome(){
-  const child=S.user; if(!child||child==='parent') return;
+async function renderChildHome(childOverride){
+  const child=childOverride||S.user;
+  if(!child||child==='parent') return;
   document.getElementById('ch-avatar').textContent=child.avatar;
   document.getElementById('ch-name').textContent=child.name;
   const selDate=getDate('child');
   const curMonth=selDate.slice(0,7);
   const isToday=selDate===ymd();
   const isPaid=isPaidMonth(curMonth);
+  const tasks=S.family.tasks||[];
 
   const[monthC,dayC]=await Promise.all([
     getCompletions({month:curMonth,childId:child.id}),
@@ -1758,8 +1794,16 @@ async function renderChildHome(){
     earnBadge.title=`${monthEarn}₪ סה"כ`;
   }
 
-  // Today tag
-  const dayEarn=dayC.reduce((s,c)=>s+c.price,0);
+  // Child hero top buttons — differ if parent is viewing
+  const isParentView=S._parentViewingChild&&S._parentViewingChild.id===child.id;
+  const topBtns=document.querySelector('.child-hero-top');
+  if(topBtns){
+    topBtns.innerHTML=isParentView
+      ?`<button class="child-hero-btn" onclick="backToChildSelect()">← חזור להורה</button>
+         <button class="child-hero-btn" onclick="showScreen('screen-child-history')">📜 היסטוריה</button>`
+      :`<button class="child-hero-btn" onclick="backToChildSelect()">← החלף</button>
+        <button class="child-hero-btn" onclick="showScreen('screen-child-history')">📜 היסטוריה</button>`;
+  }
   const tag=document.getElementById('ch-today-tag');
   if(dayC.length>0){tag.textContent=(isToday?'היום':'יום זה')+': +'+dayEarn+'₪';tag.style.display='flex';}
   else tag.style.display='none';
@@ -1783,16 +1827,20 @@ async function renderChildHome(){
 
   // Tasks grid — always clickable, show done count for selected date
   const grid=document.getElementById('child-tasks-grid'); grid.innerHTML='';
-  S.family.tasks.forEach(task=>{
-    const cnt=dayC.filter(c=>c.taskId===task.id).length;
-    const card=document.createElement('div');
-    card.className='task-card'+(cnt>0?' done':'');  // never add paid-task class
-    card.innerHTML=`${cnt>0?`<div class="task-done-badge">${cnt>1?cnt:'✓'}</div>`:''}${cnt>1?`<div class="task-count">${cnt}</div>`:''}
-      <div class="task-emoji">${task.emoji}</div><div class="task-name">${task.name}</div>
-      <div class="task-price-tag">+${task.price}₪</div>`;
-    card.onclick=()=>openConfirmTask(task,selDate);
-    grid.appendChild(card);
-  });
+  if(!tasks.length){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text2);font-size:13px;">אין משימות מוגדרות</div>`;
+  } else {
+    tasks.forEach(task=>{
+      const cnt=dayC.filter(c=>c.taskId===task.id).length;
+      const card=document.createElement('div');
+      card.className='task-card'+(cnt>0?' done':'');
+      card.innerHTML=`${cnt>0?`<div class="task-done-badge">${cnt>1?cnt:'✓'}</div>`:''}${cnt>1?`<div class="task-count">${cnt}</div>`:''}
+        <div class="task-emoji">${task.emoji}</div><div class="task-name">${task.name}</div>
+        <div class="task-price-tag">+${task.price}₪</div>`;
+      card.onclick=()=>openConfirmTask(task,selDate);
+      grid.appendChild(card);
+    });
+  }
 
   // Done list for selected date
   const list=document.getElementById('child-today-list'); list.innerHTML='';
