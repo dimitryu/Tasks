@@ -309,7 +309,7 @@
 </head>
 <body>
 
-<div class="ver" id="ver-badge">v3.1</div>
+<div class="ver" id="ver-badge">v3.2</div>
 
 <!-- LOADING -->
 <div id="screen-loading" class="screen active">
@@ -808,7 +808,7 @@ import {
 // ══════════════════════════════════════════
 //  VERSION & CONSTANTS
 // ══════════════════════════════════════════
-const VERSION = 'v3.1';
+const VERSION = 'v3.2';
 document.getElementById('ver-badge').textContent = VERSION;
 // Inject version badge into every app-header (centered)
 document.querySelectorAll('.app-header').forEach(h=>{
@@ -1254,8 +1254,10 @@ function shake(id){ const el=document.getElementById(id); el.style.animation='sh
 function getDate(who){
   const id=who==='parent'?'parent-date-picker':'child-date-picker';
   const el=document.getElementById(id);
-  const val=el?.value;
-  return (val&&val.length===10)?val:ymd();
+  const val=el?.value||'';
+  // Must be exactly yyyy-mm-dd (10 chars)
+  if(val.match(/^\d{4}-\d{2}-\d{2}$/)) return val;
+  return ymd();
 }
 
 // Debounce wrapper — prevents double-firing from onchange + oninput + listener
@@ -1312,9 +1314,12 @@ async function renderParentHome(){
   S.family.children.forEach(child=>{
     const amt=monthC.filter(c=>c.childId===child.id).reduce((s,c)=>s+c.price,0);
     const card=document.createElement('div'); card.className='kid-money-card';
+    card.style.cursor='pointer';
+    card.title='לחץ לצפייה במסך '+child.name;
     card.innerHTML=`<div class="kid-money-avatar">${child.avatar}</div><div>
       <div class="kid-money-name">${child.name}${curMonthPaid?' <span style="font-size:9px;">✅</span>':''}</div>
       <div class="kid-money-amount">${amt}₪</div></div>`;
+    card.onclick=()=>parentViewChild(child.id);
     strip.appendChild(card);
   });
   if(S.family.children.length>1){
@@ -1774,6 +1779,9 @@ async function renderChildHome(childOverride){
   if(!child||child==='parent') return;
   document.getElementById('ch-avatar').textContent=child.avatar;
   document.getElementById('ch-name').textContent=child.name;
+  // Ensure date picker is initialized
+  const picker=document.getElementById('child-date-picker');
+  if(picker&&!picker.value) picker.value=ymd();
   const selDate=getDate('child');
   const curMonth=selDate.slice(0,7);
   const isToday=selDate===ymd();
@@ -1869,14 +1877,16 @@ window.doCompleteTask=async function(){
   closeModal('modal-confirm');
   const date=task._date||ymd();
   try{
-    await addDoc(collection(db,'completions'),{
+    const docRef=await addDoc(collection(db,'completions'),{
       familyId:S.familyId, childId:child.id, childName:child.name,
       taskId:task.id, taskName:task.name, price:task.price,
       date, month:date.slice(0,7), timestamp:serverTimestamp(), paid:false
     });
     confetti(); showToast('🎉 כל הכבוד! +'+task.price+'₪','ok');
-    await renderChildHome();
-  }catch(e){showToast('שגיאה','err');}
+    // Pass child explicitly; small delay so Firestore cache settles
+    await new Promise(r=>setTimeout(r,250));
+    await renderChildHome(child);
+  }catch(e){ showToast('שגיאה. נסה שוב','err'); console.error(e); }
 };
 
 // ══════════════════════════════════════════
