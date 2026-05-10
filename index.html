@@ -309,7 +309,7 @@
 </head>
 <body>
 
-<div class="ver" id="ver-badge">v3.2</div>
+<div class="ver" id="ver-badge">v3.3</div>
 
 <!-- LOADING -->
 <div id="screen-loading" class="screen active">
@@ -808,7 +808,7 @@ import {
 // ══════════════════════════════════════════
 //  VERSION & CONSTANTS
 // ══════════════════════════════════════════
-const VERSION = 'v3.2';
+const VERSION = 'v3.3';
 document.getElementById('ver-badge').textContent = VERSION;
 // Inject version badge into every app-header (centered)
 document.querySelectorAll('.app-header').forEach(h=>{
@@ -1812,9 +1812,13 @@ async function renderChildHome(childOverride){
       :`<button class="child-hero-btn" onclick="backToChildSelect()">← החלף</button>
         <button class="child-hero-btn" onclick="showScreen('screen-child-history')">📜 היסטוריה</button>`;
   }
+  // Today tag
+  const dayEarn=dayC.reduce((s,c)=>s+c.price,0);
   const tag=document.getElementById('ch-today-tag');
-  if(dayC.length>0){tag.textContent=(isToday?'היום':'יום זה')+': +'+dayEarn+'₪';tag.style.display='flex';}
-  else tag.style.display='none';
+  if(tag){
+    if(dayC.length>0){tag.textContent=(isToday?'היום':'יום זה')+': +'+dayEarn+'₪';tag.style.display='flex';}
+    else tag.style.display='none';
+  }
 
   // Paid banner — informational only, never blocks
   let paidBannerEl=document.getElementById('child-paid-banner');
@@ -1852,7 +1856,6 @@ async function renderChildHome(childOverride){
 
   // Done list for selected date
   const list=document.getElementById('child-today-list'); list.innerHTML='';
-  const listTitle=document.querySelector('#screen-child-home .tasks-body .section-title:last-of-type');
 
   if(!dayC.length){
     list.innerHTML=`<p style="font-size:12px;color:var(--text2);text-align:center;padding:12px;">${isToday?'עוד לא ביצעת משימות היום':'לא בוצעו משימות ביום זה'}</p>`;
@@ -1876,17 +1879,23 @@ window.doCompleteTask=async function(){
   if(!task||!child||child==='parent') return;
   closeModal('modal-confirm');
   const date=task._date||ymd();
+  // 1. Save to Firebase — show error only if THIS fails
   try{
-    const docRef=await addDoc(collection(db,'completions'),{
+    await addDoc(collection(db,'completions'),{
       familyId:S.familyId, childId:child.id, childName:child.name,
       taskId:task.id, taskName:task.name, price:task.price,
       date, month:date.slice(0,7), timestamp:serverTimestamp(), paid:false
     });
-    confetti(); showToast('🎉 כל הכבוד! +'+task.price+'₪','ok');
-    // Pass child explicitly; small delay so Firestore cache settles
-    await new Promise(r=>setTimeout(r,250));
-    await renderChildHome(child);
-  }catch(e){ showToast('שגיאה. נסה שוב','err'); console.error(e); }
+  }catch(e){
+    showToast('שגיאה בשמירה. נסה שוב','err');
+    console.error('addDoc error:',e);
+    return;
+  }
+  // 2. Show success then refresh UI (errors here don't affect the user's data)
+  confetti(); showToast('🎉 כל הכבוד! +'+task.price+'₪','ok');
+  await new Promise(r=>setTimeout(r,250));
+  try{ await renderChildHome(child); }
+  catch(e){ console.error('renderChildHome error:',e); }
 };
 
 // ══════════════════════════════════════════
